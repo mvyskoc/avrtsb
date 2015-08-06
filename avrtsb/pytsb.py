@@ -6,10 +6,16 @@ import argparse
 import firmware
 import textwrap
 import re
+import locale
+import serial
 from intelhex import IntelHex, diff_dumps
 from tsbloader import *
 from tsb_locale import *
 
+try:
+    from serial.tools.list_ports import comports
+except ImportError:
+    comports = None
 
 sys.modules.setdefault('avrtsb.firmware', firmware)
 stderr = sys.stderr 
@@ -27,30 +33,54 @@ class ConsoleApp():
     
     def argParserInit(self):
         self.parser = argparse.ArgumentParser(
-           description =_("Console Tool for TinySafeBoot, the tiny and safe AVR bootloader."),
-           prog="pytsb",
+           formatter_class=argparse.RawDescriptionHelpFormatter,
+           description =_("Console Tool for TinySafeBoot, the tiny and safe AVR bootloader.\n" +
+                          "----------------------------------------------------------------"),
+           epilog = _(
+                      "For more information use:\n" +
+                      "  %(prog)s tsb --help\n" +
+                      "  %(prog)s fw --help\n\n" +
+                      
+                      "EXAMPLES:\n" +
+                      "  Connect to TSB and show bootloader and device info\n"+
+                      "    %(prog)s tsb COM1 -i\n\n" +
+                      "  Connection to TSB and write new firmware:\n" +
+                      "    %(prog)s tsb COM1 -fw my_program.hex -ew my_eeprom.hex\n\n" +
+                      
+                      "  Get list of all supported devices for making firmware:\n" +
+                      "    %(prog)s tsb -d help\n\n"
+                      "  Make custom firmware for ATmega8 with serial interface RX=d0, TX=d1\n"+
+                      "    %(prog)s fw -d ATmega8 -pd0d1 -o tsb_ATmega8_d0d1.hex\n\n"
+                      ),
+           prog="pytsb"
         )
         
         subparsers = self.parser.add_subparsers(dest='subparser_name',
                     help='sub-command help')
-        parser_tsb = subparsers.add_parser('tsb', help=_('Connect to bootloader') )
-        self.argParserTSBInit(parser_tsb)
+        self.parser_tsb = subparsers.add_parser('tsb', help=_('Connect to bootloader') )
+        self.argParserTSBInit(self.parser_tsb)
 
-        parser_fw = subparsers.add_parser('fw', 
+        self.parser_fw = subparsers.add_parser('fw', 
             help=_('Make custom TSB firmware') )
-        self.argParserFirmwareInit(parser_fw)
+        self.argParserFirmwareInit(self.parser_fw)
 
 
     def argParserTSBInit(self, parser):
         con_group = parser.add_argument_group(_("Connection parameters"))
         con_group.add_argument("devicename", 
-            help=_("Device name of genuine or virtual serial port"))
+            help=_("Device name of genuine or virtual serial port. Use %(prog)s help for list of available devices"))
 
-        con_group.add_argument("-b", "--baudrate", default=9600, type=int,
+        con_group.add_argument("-b", "--baudrate", default='9600', type=str,
             help=_("Set the baudrate of the serial port. Default 9600 bps"))
 
         con_group.add_argument("-p", "--password", default="",
             help=_("Password for accessing bootloader"))
+
+        con_group.add_argument("-t", "--timeout", type=int, default=200,
+            help=_("Delay in ms after reset before TSB activation. Default value is 200 ms. " +
+                   "If you before set very low TIMOUT_FACTOR, you may need decrease this value. Very low value cause trouble" +
+                   "because of AVR startup time.")
+        )
         
         con_group.add_argument("--reset-dtr", choices=['0','1'],
             metavar='LEVEL = {0,1}', default="1",
@@ -126,29 +156,43 @@ class ConsoleApp():
         )
         
     def argParserFirmwareInit(self, parser):
-        parser.add_argument("-d", "--device", default="", type=str,
+        parser.add_argument("-d", "--device", type=str,
             help=_("Type of ATtiny/ATmega device for which the firmware will be made. " +
                    "For the list of all supported devices use --device help" )
             )
         
-        parser.add_argument("-p", "--rxtx", default="", type=str,
+        parser.add_argument("-p", "--rxtx", type=str,
             help=_("Port definition for serial communication. For example d0d1 means D0=RxD and D1=TxD."))
  
-        parser.add_argument("-o", "--output", default="", metavar="FILENAME",
+        parser.add_argument("-o", "--output", metavar="FILENAME",
             help=_("Name of output file with generated firmware. File will be Hex (.hex) or Binary (other extension)"))
 
     def run(self):
         args = self.parser.parse_args()
         self.args = args
         if args.subparser_name == 'tsb':
-            self.run_tsb()
+            self.run_tsb(self.parser_tsb)
 
         if args.subparser_name == 'fw':
-            self.run_fw()
+            self.run_fw(self.parser_fw)
             
-    def run_tsb(self):
+    def run_tsb(self, parser):
         args = self.args
 
+        if args.devicename == "help":
+            self.showPortList()
+            return
+
+        if args.baudrate == "help":
+            self.showBaudrates()
+            return
+        
+        if not args.baudrate.isdigit():
+            stderr.write(_("%(prog)s error: argument -b/--buadrate: invalid int value: '%s'") % (args.baudrate,))
+            return
+        
+        args.baudrate = int(args.baudrate)
+        
         # If there is --flash-verify without filename specified arg.flash_verify==None
         # If there is no option --flash-verify arg.flash_verify==False
         if (args.flash_verify == None) and (args.flash_write == None):
@@ -218,7 +262,7 @@ class ConsoleApp():
         if args.eeprom_verify:
             self.eepromVerify()
 
-    def run_fw(self):
+    def run_fw(self, parser):
         args = self.args
         
         try:
@@ -231,13 +275,15 @@ class ConsoleApp():
         if args.device == 'help':
             self.showFWDeviceList()
             return
-        
-        if args.device == "":
+
+        if not args.device:
+            parser.print_usage()
             stderr.write(_("pytsb fw: error: argument -d/--device expected., Use --device help for " +
                      "list of all supported devices.\n"))
             return
         
-        if args.rxtx == "":
+        if not args.rxtx:
+            parser.print_usage()
             stderr.write(_("pytsb fw: error: argument -p/--rxtx expected.\n"))
             return
         
@@ -246,7 +292,7 @@ class ConsoleApp():
                      "D0 = RxD, and D1=TxD.\n")))
             return
         
-        if args.output == "":
+        if not args.output:
             args.output = "tsb" + "_" + args.device + "_" + args.rxtx + ".hex"
 
         if os.path.isfile(args.output):
@@ -257,8 +303,19 @@ class ConsoleApp():
 
 
     def initTSB(self):
-        serial = Serial(self.args.devicename, self.args.baudrate)
-        self.tsb = TSBLoader( serial )
+        try:
+            serial_port = Serial(self.args.devicename, self.args.baudrate)
+        except Exception as e:        
+            if self.args.baudrate not in serial.Serial.BAUDRATES:
+                print _("Try to use standard baudrate from the following list:")
+                self.showBaudrates()
+                
+            raise AppException(e.message)
+            
+            
+            
+        self.tsb = TSBLoader( serial_port )
+        self.tsb.timeout_reset = self.args.timeout
         self.tsb.password = self.args.password
         
         if self.args.reset_rts <> None:
@@ -270,6 +327,18 @@ class ConsoleApp():
             self.tsb.reset_active = int(self.args.reset_dtr)
 
 
+    def showPortList(self):
+        if comports:
+            print _('List of available ports:')
+            for port, desc, hwid in sorted(comports()):
+                print _('  %-20s %s') % (port, desc.decode(SYS_ENCODING))
+
+    def showBaudrates(self):
+        print _('List of standard baudrates, not all of them must be supported:')
+        baudrates = [str(bps) for bps in serial.Serial.BAUDRATES]
+        for line in textwrap.wrap(", ".join(baudrates)):
+            print line
+    
     def activateTSB(self):
         self.initTSB()
         self.tsb.setPower()     #Has sence only for self powered convertors
@@ -305,7 +374,7 @@ class ConsoleApp():
         ihex_flash.puts(0, flash_data)
         
         sio = StringIO()
-        diff_dumps(ihex_flash, ihex_cmp, tofile=sio, name1="Flash ROM device memory", name2=cmp_filename)
+        diff_dumps(ihex_flash, ihex_cmp, tofile=sio, name1=_l("Flash ROM device memory"), name2=cmp_filename)
         diff_report = sio.getvalue(False)
         sio.close()
         
@@ -357,7 +426,7 @@ class ConsoleApp():
         ihex_eeprom.puts(0, eeprom_data)        
         
         sio = StringIO()
-        diff_dumps(ihex_eeprom, ihex_cmp, tofile=sio, name1="EEPROM device memory", name2=cmp_filename)
+        diff_dumps(ihex_eeprom, ihex_cmp, tofile=sio, name1=_l("EEPROM device memory"), name2=cmp_filename)
         diff_report = sio.getvalue(False)
         sio.close()
         
@@ -483,10 +552,10 @@ class ConsoleApp():
 
 def main():
     app = ConsoleApp()
-    app.run()
+    #app.run()
     try:
         pass
-        #app.run()
+        app.run()
     except Exception as e:
         print e.message
     finally:

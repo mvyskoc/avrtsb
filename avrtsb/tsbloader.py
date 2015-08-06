@@ -169,7 +169,7 @@ class TSBLoader:
 
         self.setPassword("")
         self.one_wire = False
-        self.timeout_reset = 100 #ms
+        self.timeout_reset = 200 #ms
         self.device_info = DeviceInfo()
         
         #Timeout for sendind 10 characters 
@@ -328,7 +328,7 @@ class TSBLoader:
         is used for write into the FLASH memory."""
 
         #Every instructions has same size 2bytes
-        opcodes = [data[i]+data[i+1] for i in xrange(0, len(data), 2)]
+        opcodes = [data[i:i+2] for i in xrange(0, len(data), 2)]
         return '\xE8\x95' in opcodes
     
     def flashRead(self):
@@ -366,7 +366,7 @@ class TSBLoader:
         #Pad data to all page
         round_data = int(math.ceil(len(data) / float(pagesize)) * pagesize)
         data = data.ljust(round_data, '\xFF')
-	print "Len(data)=%d, pagesize=%d" % (len(data), pagesize)        
+	# print "Len(data)=%d, pagesize=%d" % (len(data), pagesize)        
 
         if len(data) > self.device_info.appflash:
             raise TSBException(_("Error: Not enough space."))

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyTSB 0.2\n"
 "Report-Msgid-Bugs-To: m.vyskoc@seznam.cz\n"
-"POT-Creation-Date: 2015-04-27 21:18+0200\n"
+"POT-Creation-Date: 2015-04-29 18:28+0200\n"
 "PO-Revision-Date: 2015-03-31 18:30+0100\n"
 "Last-Translator: Martin Vyskočil <m.vyskoc@seznam.cz>\n"
 "Language-Team: cs_CZ <LL@li.org>\n"
@@ -18,57 +18,109 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: ../pytsb.py:30
-msgid "Console Tool for TinySafeBoot, the tiny and safe AVR bootloader."
-msgstr "Konzolová aplikace pro práci s AVR zavaděčem TinySafeBoot."
+#: ../pytsb.py:37
+msgid ""
+"Console Tool for TinySafeBoot, the tiny and safe AVR bootloader.\n"
+"----------------------------------------------------------------"
+msgstr ""
+"TinySafeBoot konzolová aplikace, malý a bezpečný zavaděč pro AVR.\n"
+"-----------------------------------------------------------------"
 
-#: ../pytsb.py:36
+
+#: ../pytsb.py:39
+#, python-format
+msgid ""
+"For more information use:\n"
+"  %(prog)s tsb --help\n"
+"  %(prog)s fw --help\n"
+"\n"
+"EXAMPLES:\n"
+"  Connect to TSB and show bootloader and device info\n"
+"    %(prog)s tsb COM1 -i\n"
+"\n"
+"  Connection to TSB and write new firmware:\n"
+"    %(prog)s tsb COM1 -fw my_program.hex -ew my_eeprom.hex\n"
+"\n"
+"  Get list of all supported devices for making firmware:\n"
+"    %(prog)s tsb -d help\n"
+"\n"
+"  Make custom firmware for ATmega8 with serial interface RX=d0, TX=d1\n"
+"    %(prog)s fw -d ATmega8 -pd0d1 -o tsb_ATmega8_d0d1.hex\n"
+"\n"
+msgstr ""
+"Pro více informací použijte:\n"
+"  %(prog)s tsb --help\n"
+"  %(prog)s fw --help\n"
+"\n"
+"PŘÍKLADY:\n"
+"  Připojí se k TSB a zobrazí informace o zavaděči a zařízení\n"
+"    %(prog)s tsb COM1 -i\n"
+"\n"
+"  Připojí se k TSB a nahraje nový firmware:\n"
+"    %(prog)s tsb COM1 -fw my_program.hex -ew my_eeprom.hex\n"
+"\n"
+"  Zobrazí seznam všech zařízení pro vytvoření uživatelského firmware:\n"
+"    %(prog)s tsb -d help\n"
+"\n"
+"  Vytvoří uživatelský firmware pro ATmega8 se sériovým rozhranním RX=d0, TX=d1\n"
+"    %(prog)s fw -d ATmega8 -pd0d1 -o tsb_ATmega8_d0d1.hex\n"
+"\n"
+#: ../pytsb.py:60
 msgid "Connect to bootloader"
 msgstr "Připojení k zavaděči"
 
-#: ../pytsb.py:40
+#: ../pytsb.py:64
 msgid "Make custom TSB firmware"
 msgstr "Generování uživatelského firmware"
 
-#: ../pytsb.py:45
+#: ../pytsb.py:69
 msgid "Connection parameters"
 msgstr "Parametry komunikace"
 
-#: ../pytsb.py:47
-msgid "Device name of genuine or virtual serial port"
+#: ../pytsb.py:71
+msgid ""
+"Device name of genuine or virtual serial port. Use %(prog)s help for list"
+" of available devices"
 msgstr ""
-"Název skutečného nebo virtuálního sériového portu. Například /dev/ttyUSB0"
-" v linuxu nebo COM1 ve Windows."
+"Název skutečného nebo virtuálního sériového portu. "
+"Použijte %(prog)s help pro výpis dostupných sériových portů."
 
-#: ../pytsb.py:50
+#: ../pytsb.py:74
 msgid "Set the baudrate of the serial port. Default 9600 bps"
 msgstr "Nastaví komunikační rychlost sériového portu. Výchozí 9600 bps"
 
-#: ../pytsb.py:53
+#: ../pytsb.py:77
 msgid "Password for accessing bootloader"
 msgstr "Heslo pro aktivaci zavaděče"
 
-#: ../pytsb.py:57
+#: ../pytsb.py:80
+msgid ""
+"Delay in ms after reset before TSB activation. Default value is 200 ms. "
+"If you before set very low TIMOUT_FACTOR, you may need decrease this "
+"value. Very low value cause troublebecause of AVR startup time."
+msgstr ""
+
+#: ../pytsb.py:87
 msgid "Reset MCU with DTR line active in LEVEL. Default: --reset-dtr 1"
 msgstr "Resetovat MCU linkou DTR aktivní v LEVEL. Výchozí: --reset-dtr 1"
 
-#: ../pytsb.py:61
+#: ../pytsb.py:91
 msgid "Reset MCU with RTS line active in LEVEL"
 msgstr "Resetovat MCU linkou RTS aktivní v LEVEL"
 
-#: ../pytsb.py:64
+#: ../pytsb.py:94
 msgid "Show bootloader and device info"
 msgstr "Zobrazí informaci o zavaděči a programovaném MCU"
 
-#: ../pytsb.py:67
+#: ../pytsb.py:97
 msgid "TinySafeBoot settings"
 msgstr "Konfigurace TinySafeBoot"
 
-#: ../pytsb.py:70
+#: ../pytsb.py:100
 msgid "Change password for activating TinySafeBoot loader."
 msgstr "Změna hesla pro aktivaci zavaděče."
 
-#: ../pytsb.py:74
+#: ../pytsb.py:104
 msgid ""
 "Change the time how long time the bootloader will wait for activation "
 "before the downloaded firmware is started. The waiting time is given by "
@@ -81,7 +133,7 @@ msgstr ""
 "cca 0.1 až několik sekund). TIMEOUT_FACTOR může být vypočten ze zadaného "
 "času v ms a MCU frekvence v MHz nebo Hz."
 
-#: ../pytsb.py:81
+#: ../pytsb.py:111
 msgid ""
 "Emergency erase after lost password. Reset the contents of the flash ROM "
 "and EEPROM to the value '0xff'. The bootloader is not deleted, only TSB "
@@ -93,23 +145,23 @@ msgstr ""
 "TIMEOUT_FACTOR nastaven na maximální hodnotu 255. Operace je časově "
 "náročná od 10 sekund až 1 minuta"
 
-#: ../pytsb.py:87
+#: ../pytsb.py:117
 msgid "FLASH programming"
 msgstr "Programování FLASH"
 
-#: ../pytsb.py:90
+#: ../pytsb.py:120
 msgid "Read flash ROM device memory and write to the specified file"
 msgstr "Přečte flash ROM ze zařízení a zapíše do specifikovaného souboru."
 
-#: ../pytsb.py:93
+#: ../pytsb.py:123
 msgid "This will reset the content of the flash ROM to the value '0xff'"
 msgstr "Nastaví obsah flash ROM na hodnotu '0xff'"
 
-#: ../pytsb.py:97
+#: ../pytsb.py:127
 msgid "Read the specified file and write it to the flash ROM device memory"
 msgstr "Přečte určený soubor a zapíše do flash ROM zařízení."
 
-#: ../pytsb.py:101
+#: ../pytsb.py:131
 msgid ""
 "Read the specified file and compare it with the flash ROM device memory. "
 "When it is used with the option --flash-write than the FILENAME can be "
@@ -119,23 +171,23 @@ msgstr ""
 "souboru může být vynechán, pokud je použito současně s parametrem "
 "--flash-write."
 
-#: ../pytsb.py:105
+#: ../pytsb.py:135
 msgid "EEPROM programming"
 msgstr "EEPROM programování"
 
-#: ../pytsb.py:108
+#: ../pytsb.py:138
 msgid "Read EEPROM device memory and write to the specified file"
 msgstr "Přečte paměť EEPROM ze zařízení a uloží do určeného souboru"
 
-#: ../pytsb.py:111
+#: ../pytsb.py:141
 msgid "This will reset the content of the EEPROM to the value '0xff'"
 msgstr "Nastaví obsah EEPROM paměti na hodnotu '0xff'"
 
-#: ../pytsb.py:115
+#: ../pytsb.py:145
 msgid "Read the specified file and write it to the EEPROM device memory"
 msgstr "Přečte určený soubor a zapíše do EEPROM paměti v zařízení"
 
-#: ../pytsb.py:119
+#: ../pytsb.py:149
 msgid ""
 "Read the specified file and compare it with EEPROM device memory. When is"
 " used with --eeprom-write option, the FILENAME can be omitted."
@@ -143,7 +195,7 @@ msgstr ""
 "Přečte určený soubor a porovná s pamětí EEPROM v zařízení. Název souboru "
 "může být vynechán, pokud je použit současně s parametrem --eeprom-write."
 
-#: ../pytsb.py:124
+#: ../pytsb.py:154
 msgid ""
 "Force to perform some danger operation: overwrite existing file or write "
 "write new bootloader to the device flash ROM."
@@ -151,7 +203,7 @@ msgstr ""
 "Vynutí provedení nebezpečné operace: přepsání existujícího souboru nebo "
 "zápis nového zavaděče do paměti flash ROM."
 
-#: ../pytsb.py:130
+#: ../pytsb.py:160
 msgid ""
 "Type of ATtiny/ATmega device for which the firmware will be made. For the"
 " list of all supported devices use --device help"
@@ -159,7 +211,7 @@ msgstr ""
 "Typ ATtiny/ATmega zařízení pro generování firmware. Pro seznam všech "
 "podporovaných zařízení použijte volbu --device help"
 
-#: ../pytsb.py:135
+#: ../pytsb.py:165
 msgid ""
 "Port definition for serial communication. For example d0d1 means D0=RxD "
 "and D1=TxD."
@@ -167,7 +219,7 @@ msgstr ""
 "Nastavení portů pro sériovou komunikaci. Například d0d1 znamená D0=RxD a "
 "D1=TxD."
 
-#: ../pytsb.py:138
+#: ../pytsb.py:168
 msgid ""
 "Name of output file with generated firmware. File will be Hex (.hex) or "
 "Binary (other extension)"
@@ -175,34 +227,39 @@ msgstr ""
 "Jméno výstupní souboru s firmwarem. Soubor bude ve formátu Intel Hex "
 "(.hex) nebo binární (pro ostatní přípony)"
 
-#: ../pytsb.py:155
+#: ../pytsb.py:191
+#, python-format
+msgid "%(prog)s error: argument -b/--buadrate: invalid int value: '%s'"
+msgstr "%(prog)s chyba: argument -b/--baudrate: neplatná hodnota '%s'"
+
+#: ../pytsb.py:199
 #, python-format
 msgid "%s: error: argument -fv/--flash-verify: expected 1 argument(s)\n"
 msgstr "%s: chyba: parametr -fv/--flash-verify: očekává 1 argument\n"
 
-#: ../pytsb.py:156
+#: ../pytsb.py:200
 msgid "Argument can be omitted only when is used with option --flash-write\n"
 msgstr "Argument může být vynechán pouze v kombinaci s --flash-write\n"
 
-#: ../pytsb.py:167
+#: ../pytsb.py:211
 #, python-format
 msgid "%s: error: argument -fv/--eeprom-verify: expected 1 argument(s)"
 msgstr "%s: chyba: parametr -fv/--eeprom-verify: očekává 1 argument"
 
-#: ../pytsb.py:168
+#: ../pytsb.py:212
 msgid "Argument can be omitted only when is used with option --eeprom-write"
 msgstr "Argument může být vynechán pouze v kombinaci s --eeprom-write"
 
-#: ../pytsb.py:177
+#: ../pytsb.py:221
 #, python-format
 msgid "%s: error: argument --change-timeout: expected 1 or 2 argument(s)"
 msgstr "%s: chyba: parametr --change-timeout: očekává 1 nebo 2 argumenty"
 
-#: ../pytsb.py:227
+#: ../pytsb.py:271
 msgid "Cannot access firmware database.\n"
 msgstr "Chyba při otevírání databáze s firmwarem."
 
-#: ../pytsb.py:236
+#: ../pytsb.py:281
 msgid ""
 "pytsb fw: error: argument -d/--device expected., Use --device help for "
 "list of all supported devices.\n"
@@ -210,13 +267,12 @@ msgstr ""
 "pytsb fw: chyba: očekáván argument -d/--device. Použijte --device help "
 "pro výpis všech podporovaných zařízení.\n"
 
-#: ../pytsb.py:241
+#: ../pytsb.py:287
 msgid "pytsb fw: error: argument -p/--rxtx expected.\n"
 msgstr ""
 "pytsb fw: chyba: očekván argument -p/--rxtx.\n"
-"\""
 
-#: ../pytsb.py:245
+#: ../pytsb.py:291
 msgid ""
 "pytsb fw: error: argument -p/--rxtx must be in the form d0d1, where D0 = "
 "RxD, and D1=TxD.\n"
@@ -224,12 +280,29 @@ msgstr ""
 "pytsb fw: chyba: argument -p/--rxtx musí být ve formátu d0d1, kde D0=RxD "
 "a D1=TxD.\n"
 
-#: ../pytsb.py:253
+#: ../pytsb.py:299
 #, python-format
 msgid "Output file '%s' already exist, do nothing.\n"
 msgstr "Výstupní soubor '%s' už existuje, končím.\n"
 
-#: ../pytsb.py:286 ../pytsb.py:337
+#: ../pytsb.py:310
+msgid "Try to use standard baudrate from the following list:"
+msgstr ""
+
+#: ../pytsb.py:332
+msgid "List of available ports:"
+msgstr "Seznam dostupných portů:"
+
+#: ../pytsb.py:334
+#, python-format
+msgid "  %-20s %s"
+msgstr "  %-20s %s"
+
+#: ../pytsb.py:337
+msgid "List of standard baudrates, not all of them must be supported:"
+msgstr "Seznam standardních rychlostí. Ne všechny musí být podporovány."
+
+#: ../pytsb.py:355 ../pytsb.py:406
 #, python-format
 msgid ""
 "Error: output file \"%s\" already exist. Use --force option or delete the"
@@ -238,15 +311,19 @@ msgstr ""
 "Chyba: výstupní soubor \"%s\" už existuje. Použijdte parameter --force "
 "nebo smažte existující soubor"
 
-#: ../pytsb.py:313 ../pytsb.py:365
+#: ../pytsb.py:377
+msgid "Flash ROM device memory"
+msgstr "Paměť zařízení Flash ROM"
+
+#: ../pytsb.py:382 ../pytsb.py:434
 msgid "Data verification OK"
 msgstr "Ověření dat OK"
 
-#: ../pytsb.py:315
+#: ../pytsb.py:384
 msgid "Flash ROM device verification error\n"
 msgstr "Chyba ověření paměti flash ROM\n"
 
-#: ../pytsb.py:327
+#: ../pytsb.py:396
 msgid ""
 "Warning: firmware includes SPM instruction, which can be dangerous for "
 "bootloader.\n"
@@ -256,7 +333,7 @@ msgstr ""
 "Použijte parametr --force, pokud si opravdu přejete provést zápis do "
 "flash ROM"
 
-#: ../pytsb.py:330
+#: ../pytsb.py:399
 msgid ""
 "Firmware includes SPM instruction. Continue to write to the device flash "
 "ROM --force option is used."
@@ -264,24 +341,28 @@ msgstr ""
 "Firmware obsahuje SPM instrukce. Pokračuji v nahrávání do zařízení "
 "vynuceno volbou --force"
 
-#: ../pytsb.py:367
+#: ../pytsb.py:429
+msgid "EEPROM device memory"
+msgstr ""
+
+#: ../pytsb.py:436
 msgid "EEPROM verification error\n"
 msgstr "Chyba ověřování paměti EEPROM\n"
 
-#: ../pytsb.py:373
+#: ../pytsb.py:442
 msgid "EEPROM Erase OK"
 msgstr "Vymazání paměti EEPROM OK"
 
-#: ../pytsb.py:380
+#: ../pytsb.py:449
 msgid "EEPROM Write OK"
 msgstr "Zápis EEPROM OK"
 
-#: ../pytsb.py:387
+#: ../pytsb.py:456
 #, python-format
 msgid "Input file \"%s\" not found."
 msgstr "Vstupní soubor \"%s\" nenalezen."
 
-#: ../pytsb.py:395
+#: ../pytsb.py:464
 msgid ""
 "Not supported file format. Only only Intel Hex (.HEX) or\n"
 "raw binary files (.BIN) are supported."
@@ -290,54 +371,54 @@ msgstr ""
 "(.HEX)\n"
 "nebo binární soubor (.BIN)."
 
-#: ../pytsb.py:424
+#: ../pytsb.py:493
 msgid "Write user data OK"
 msgstr "Zápis uživatelských dat OK"
 
-#: ../pytsb.py:425
+#: ../pytsb.py:494
 #, python-format
 msgid "Timeout factor %d"
 msgstr "Timeout faktor %d"
 
-#: ../pytsb.py:426
+#: ../pytsb.py:495
 #, python-format
 msgid "Password: %s"
 msgstr "Heslo: %s"
 
-#: ../pytsb.py:430
+#: ../pytsb.py:499
 msgid "Emergency erase is takes from 10s up to 1 minute"
 msgstr "Nouzové vymazání trvá 10s až 1 min."
 
-#: ../pytsb.py:431
+#: ../pytsb.py:500
 msgid "Please be patient"
 msgstr "Prosím buďte trpělivý"
 
-#: ../pytsb.py:437
+#: ../pytsb.py:506
 msgid "Ressetting MCU, I try to access TSB without password."
 msgstr "Resetuji MCU, pokouším se o přístup zavaděče bez hesla."
 
-#: ../pytsb.py:450
+#: ../pytsb.py:519
 msgid "List of all supported devices:"
 msgstr "Seznam všech podporovaných zařízení:"
 
-#: ../pytsb.py:458
+#: ../pytsb.py:527
 #, python-format
 msgid ""
 "Sorry firmware is not supported for '%s'\n"
 "."
 msgstr "Promiňte firmware není dostupný pro zařízení '%s'\n"
 
-#: ../pytsb.py:466
+#: ../pytsb.py:535
 #, python-format
 msgid "Device '%s' doesn't support ports '%s'\n"
 msgstr "Zařízení '%s'nepodporuje zadané porty '%s'\n"
 
-#: ../pytsb.py:467
+#: ../pytsb.py:536
 #, python-format
 msgid "Supported ports are: %s\n"
 msgstr "Podporované porty jsou: %s\n"
 
-#: ../pytsb.py:476
+#: ../pytsb.py:545
 #, python-format
 msgid "TSB firmware saved to file: '%s'"
 msgstr "TSB firmware uložen do souboru: '%s'"
