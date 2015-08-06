@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: PyTSB 0.1\n"
+"Project-Id-Version: PyTSB 0.2\n"
 "Report-Msgid-Bugs-To: m.vyskoc@seznam.cz\n"
-"POT-Creation-Date: 2015-04-01 11:24+0200\n"
+"POT-Creation-Date: 2015-04-22 11:07+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,377 +17,440 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: ../pytsb.py:25
+#: ../pytsb.py:30
 msgid "Console Tool for TinySafeBoot, the tiny and safe AVR bootloader."
 msgstr ""
 
-#: ../pytsb.py:29
-msgid "Connection parameters"
+#: ../pytsb.py:36
+msgid "Connect to bootloader"
 msgstr ""
 
-#: ../pytsb.py:31
-msgid "Device name of genuine or virtual serial port"
-msgstr ""
-
-#: ../pytsb.py:34
-msgid "Set the baudrate of the serial port. Default 9600 bps"
-msgstr ""
-
-#: ../pytsb.py:37
-msgid "Password for accessing bootloader"
-msgstr ""
-
-#: ../pytsb.py:41
-msgid "Reset MCU with DTR line active in LEVEL. Default: --reset-dtr 1"
+#: ../pytsb.py:40
+msgid "Make custom TSB firmware"
 msgstr ""
 
 #: ../pytsb.py:45
+msgid "Connection parameters"
+msgstr ""
+
+#: ../pytsb.py:47
+msgid "Device name of genuine or virtual serial port"
+msgstr ""
+
+#: ../pytsb.py:50
+msgid "Set the baudrate of the serial port. Default 9600 bps"
+msgstr ""
+
+#: ../pytsb.py:53
+msgid "Password for accessing bootloader"
+msgstr ""
+
+#: ../pytsb.py:57
+msgid "Reset MCU with DTR line active in LEVEL. Default: --reset-dtr 1"
+msgstr ""
+
+#: ../pytsb.py:61
 msgid "Reset MCU with RTS line active in LEVEL"
 msgstr ""
 
-#: ../pytsb.py:48
+#: ../pytsb.py:64
 msgid "Show bootloader and device info"
 msgstr ""
 
-#: ../pytsb.py:51
+#: ../pytsb.py:67
 msgid "TinySafeBoot settings"
 msgstr ""
 
-#: ../pytsb.py:54
+#: ../pytsb.py:70
 msgid "Change password for activating TinySafeBoot loader."
 msgstr ""
 
-#: ../pytsb.py:58
+#: ../pytsb.py:74
 msgid "Change the time how long time the bootloader will wait for activation before the downloaded firmware is started. The waiting time is given by number in range 8..255 (approx 0.1 up to many seconds). The TIMEOUT_FACTOR can be computed from give time in milliseconds and MCU frequency in MHz or Hz."
 msgstr ""
 
-#: ../pytsb.py:65
+#: ../pytsb.py:81
 msgid "Emergency erase after lost password. Reset the contents of the flash ROM and EEPROM to the value '0xff'. The bootloader is not deleted, only TSB password is reset and TIMEOUT_FACTOR set to maximum value 255. Operation is time demanding from 10 s up to 1 minute. "
 msgstr ""
 
-#: ../pytsb.py:71
+#: ../pytsb.py:87
 msgid "FLASH programming"
 msgstr ""
 
-#: ../pytsb.py:74
+#: ../pytsb.py:90
 msgid "Read flash ROM device memory and write to the specified file"
 msgstr ""
 
-#: ../pytsb.py:77
+#: ../pytsb.py:93
 msgid "This will reset the content of the flash ROM to the value '0xff'"
 msgstr ""
 
-#: ../pytsb.py:81
+#: ../pytsb.py:97
 msgid "Read the specified file and write it to the flash ROM device memory"
 msgstr ""
 
-#: ../pytsb.py:85
+#: ../pytsb.py:101
 msgid "Read the specified file and compare it with the flash ROM device memory. When it is used with the option --flash-write than the FILENAME can be omitted."
 msgstr ""
 
-#: ../pytsb.py:89
+#: ../pytsb.py:105
 msgid "EEPROM programming"
 msgstr ""
 
-#: ../pytsb.py:92
+#: ../pytsb.py:108
 msgid "Read EEPROM device memory and write to the specified file"
 msgstr ""
 
-#: ../pytsb.py:95
+#: ../pytsb.py:111
 msgid "This will reset the content of the EEPROM to the value '0xff'"
 msgstr ""
 
-#: ../pytsb.py:99
+#: ../pytsb.py:115
 msgid "Read the specified file and write it to the EEPROM device memory"
 msgstr ""
 
-#: ../pytsb.py:103
+#: ../pytsb.py:119
 msgid "Read the specified file and compare it with EEPROM device memory. When is used with --eeprom-write option, the FILENAME can be omitted."
 msgstr ""
 
-#: ../pytsb.py:108
+#: ../pytsb.py:124
 msgid "Force to perform some danger operation: overwrite existing file or write write new bootloader to the device flash ROM."
 msgstr ""
 
-#: ../pytsb.py:139 ../pytsb.py:187
+#: ../pytsb.py:130
+msgid "Type of ATtiny/ATmega device for which the firmware will be made. For the list of all supported devices use --device help"
+msgstr ""
+
+#: ../pytsb.py:135
+msgid "Port definition for serial communication. For example d0d1 means D0=RxD and D1=TxD."
+msgstr ""
+
+#: ../pytsb.py:138
+msgid "Name of output file with generated firmware. File will be Hex (.hex) or Binary (other extension)"
+msgstr ""
+
+#: ../pytsb.py:155
+#, python-format
+msgid "%s: error: argument -fv/--flash-verify: expected 1 argument(s)\n"
+msgstr ""
+
+#: ../pytsb.py:156
+msgid "Argument can be omitted only when is used with option --flash-write\n"
+msgstr ""
+
+#: ../pytsb.py:167
+#, python-format
+msgid "%s: error: argument -fv/--eeprom-verify: expected 1 argument(s)"
+msgstr ""
+
+#: ../pytsb.py:168
+msgid "Argument can be omitted only when is used with option --eeprom-write"
+msgstr ""
+
+#: ../pytsb.py:177
+#, python-format
+msgid "%s: error: argument --change-timeout: expected 1 or 2 argument(s)"
+msgstr ""
+
+#: ../pytsb.py:227
+msgid "Cannot access firmware database.\n"
+msgstr ""
+
+#: ../pytsb.py:236
+msgid "pytsb fw: error: argument -d/--device expected., Use --device help for list of all supported devices.\n"
+msgstr ""
+
+#: ../pytsb.py:241
+msgid "pytsb fw: error: argument -p/--rxtx expected.\n"
+msgstr ""
+
+#: ../pytsb.py:245
+msgid "pytsb fw: error: argument -p/--rxtx must be in the form d0d1, where D0 = RxD, and D1=TxD.\n"
+msgstr ""
+
+#: ../pytsb.py:253
+#, python-format
+msgid "Output file '%s' already exist, do nothing.\n"
+msgstr ""
+
+#: ../pytsb.py:286 ../pytsb.py:337
 #, python-format
 msgid "Error: output file \"%s\" already exist. Use --force option or delete the existing file."
 msgstr ""
 
-#: ../pytsb.py:158
+#: ../pytsb.py:308
 msgid "Flash ROM device memory"
 msgstr ""
 
-#: ../pytsb.py:163 ../pytsb.py:212
+#: ../pytsb.py:313 ../pytsb.py:365
 msgid "Data verification OK"
 msgstr ""
 
-#: ../pytsb.py:165
+#: ../pytsb.py:315
 msgid "Flash ROM device verification error"
 msgstr ""
 
-#: ../pytsb.py:177
+#: ../pytsb.py:327
 msgid ""
 "Warning: firmware includes SPM instruction, which can be dangerous for bootloader.\n"
 "Use --force option if you really wish to write to device flash ROM."
 msgstr ""
 
-#: ../pytsb.py:180
+#: ../pytsb.py:330
 msgid "Firmware includes SPM instruction. Continue to write to the device flash ROM --force option is used."
 msgstr ""
 
-#: ../pytsb.py:207
+#: ../pytsb.py:360
 msgid "EEPROM device memory"
 msgstr ""
 
-#: ../pytsb.py:214
+#: ../pytsb.py:367
 msgid "EEPROM verification error"
 msgstr ""
 
-#: ../pytsb.py:220
+#: ../pytsb.py:373
 msgid "EEPROM Erase OK"
 msgstr ""
 
-#: ../pytsb.py:227
+#: ../pytsb.py:380
 msgid "EEPROM Write OK"
 msgstr ""
 
-#: ../pytsb.py:234
+#: ../pytsb.py:387
 #, python-format
 msgid "Input file \"%s\" not found."
 msgstr ""
 
-#: ../pytsb.py:242
+#: ../pytsb.py:395
 msgid ""
 "Not supported file format. Only only Intel Hex (.HEX) or\n"
 "raw binary files (.BIN) are supported."
 msgstr ""
 
-#: ../pytsb.py:271
+#: ../pytsb.py:424
 msgid "Write user data OK"
 msgstr ""
 
-#: ../pytsb.py:272
+#: ../pytsb.py:425
 #, python-format
 msgid "Timeout factor %d"
 msgstr ""
 
-#: ../pytsb.py:273
+#: ../pytsb.py:426
 #, python-format
 msgid "Password: %s"
 msgstr ""
 
-#: ../pytsb.py:277
+#: ../pytsb.py:430
 msgid "Emergency erase is takes from 10s up to 1 minute"
 msgstr ""
 
-#: ../pytsb.py:278
+#: ../pytsb.py:431
 msgid "Please be patient"
 msgstr ""
 
-#: ../pytsb.py:284
+#: ../pytsb.py:437
 msgid "Ressetting MCU, I try to access TSB without password."
 msgstr ""
 
-#: ../pytsb.py:313
+#: ../pytsb.py:450
+msgid "List of all supported devices:"
+msgstr ""
+
+#: ../pytsb.py:458
 #, python-format
-msgid "%s: error: argument -fv/--flash-verify: expected 1 argument(s)\n"
+msgid ""
+"Sorry firmware is not supported for '%s'\n"
+"."
 msgstr ""
 
-#: ../pytsb.py:314
-msgid "Argument can be omitted only when is used with option --flash-write\n"
-msgstr ""
-
-#: ../pytsb.py:325
+#: ../pytsb.py:466
 #, python-format
-msgid "%s: error: argument -fv/--eeprom-verify: expected 1 argument(s)"
+msgid "Device '%s' doesn't support ports '%s'\n"
 msgstr ""
 
-#: ../pytsb.py:326
-msgid "Argument can be omitted only when is used with option --eeprom-write"
-msgstr ""
-
-#: ../pytsb.py:335
+#: ../pytsb.py:467
 #, python-format
-msgid "%s: error: argument --change-timeout: expected 1 or 2 argument(s)"
+msgid "Supported ports are: %s\n"
 msgstr ""
 
-#: ../tsbloader.py:55
+#: ../pytsb.py:476
+#, python-format
+msgid "TSB firmware saved to file: '%s'"
+msgstr ""
+
+#: ../tsbloader.py:56
 msgid "Bad info data block received !"
 msgstr ""
 
-#: ../tsbloader.py:71
+#: ../tsbloader.py:72
 msgid "Pagesize not valid - abort."
 msgstr ""
 
-#: ../tsbloader.py:83
+#: ../tsbloader.py:84
 msgid "Error: Confirmation of header expected."
 msgstr ""
 
-#: ../tsbloader.py:112
+#: ../tsbloader.py:113
 msgid "Timeout factor must be in range 8..255"
 msgstr ""
 
-#: ../tsbloader.py:124
+#: ../tsbloader.py:125
 #, python-format
 msgid "Maximum lenght of password is %d"
 msgstr ""
 
-#: ../tsbloader.py:129
-msgid "TINY SAFE BOOTLOADER"
-msgstr ""
-
-#: ../tsbloader.py:130
-#, python-format
-msgid "VERSION   : %d"
-msgstr ""
-
-#: ../tsbloader.py:131
-#, python-format
-msgid "STATUS    : %X"
-msgstr ""
-
-#: ../tsbloader.py:132
-#, python-format
-msgid "SIGNATURE : %.2X %.2X %.2X"
-msgstr ""
-
-#: ../tsbloader.py:133
-#, python-format
-msgid "DEVICE    : %s"
-msgstr ""
-
-#: ../tsbloader.py:133
-msgid "UNKNOWN"
-msgstr ""
-
 #: ../tsbloader.py:134
-#, python-format
-msgid "FLASH     : %d"
+msgid "TINY SAFE BOOTLOADER"
 msgstr ""
 
 #: ../tsbloader.py:135
 #, python-format
-msgid "APPFLASH  : %d"
+msgid "VERSION   : %d"
 msgstr ""
 
 #: ../tsbloader.py:136
 #, python-format
-msgid "PAGESIZE  : %d"
+msgid "STATUS    : %X"
 msgstr ""
 
 #: ../tsbloader.py:137
 #, python-format
-msgid "EEPROM    : %d"
+msgid "SIGNATURE : %.2X %.2X %.2X"
 msgstr ""
 
 #: ../tsbloader.py:138
 #, python-format
-msgid "APPJUMP   : %.4X"
+msgid "DEVICE    : %s"
 msgstr ""
 
 #: ../tsbloader.py:139
 #, python-format
+msgid "FLASH     : %d"
+msgstr ""
+
+#: ../tsbloader.py:140
+#, python-format
+msgid "APPFLASH  : %d"
+msgstr ""
+
+#: ../tsbloader.py:141
+#, python-format
+msgid "PAGESIZE  : %d"
+msgstr ""
+
+#: ../tsbloader.py:142
+#, python-format
+msgid "EEPROM    : %d"
+msgstr ""
+
+#: ../tsbloader.py:143
+#, python-format
+msgid "APPJUMP   : %.4X"
+msgstr ""
+
+#: ../tsbloader.py:144
+#, python-format
 msgid "TIMEOUT   : %d"
 msgstr ""
 
-#: ../tsbloader.py:180
+#: ../tsbloader.py:185
 msgid "reset_line attribute can have only TSBLoader.DTR, TSBLoader.RTS value."
 msgstr ""
 
-#: ../tsbloader.py:191
+#: ../tsbloader.py:196
 msgid "reset_active attribute can have only values only 0, 1"
 msgstr ""
 
-#: ../tsbloader.py:264
+#: ../tsbloader.py:269
 msgid "Timeout error - TSB does not respond"
 msgstr ""
 
-#: ../tsbloader.py:266
+#: ../tsbloader.py:271
 msgid "Comunication error: invalid answer from TSB"
 msgstr ""
 
-#: ../tsbloader.py:275
+#: ../tsbloader.py:280
 msgid "User data read error."
 msgstr ""
 
-#: ../tsbloader.py:299 ../tsbloader.py:471
+#: ../tsbloader.py:304 ../tsbloader.py:476
 msgid "One-wire interface detected."
 msgstr ""
 
-#: ../tsbloader.py:306
+#: ../tsbloader.py:311
 msgid "Error: Device does not respond."
 msgstr ""
 
-#: ../tsbloader.py:308
+#: ../tsbloader.py:313
 msgid " Please check your password."
 msgstr ""
 
-#: ../tsbloader.py:310
+#: ../tsbloader.py:315
 msgid " Maybe password is required."
 msgstr ""
 
-#: ../tsbloader.py:340
+#: ../tsbloader.py:345
 msgid "Read flash memory page error."
 msgstr ""
 
-#: ../tsbloader.py:343
+#: ../tsbloader.py:348
 #, python-format
 msgid "Flash read %.4X"
 msgstr ""
 
-#: ../tsbloader.py:347
+#: ../tsbloader.py:352
 msgid "Read Error: other memory page expected."
 msgstr ""
 
-#: ../tsbloader.py:364
+#: ../tsbloader.py:369
 msgid "Error: Not enough space."
 msgstr ""
 
-#: ../tsbloader.py:376
+#: ../tsbloader.py:381
 #, python-format
 msgid "Flash write %.4X"
 msgstr ""
 
-#: ../tsbloader.py:386
+#: ../tsbloader.py:391
 msgid "Error: end of appflash reached or verifying error"
 msgstr ""
 
-#: ../tsbloader.py:388
+#: ../tsbloader.py:393
 msgid "FLASH Write: Undefined error."
 msgstr ""
 
-#: ../tsbloader.py:401
+#: ../tsbloader.py:406
 msgid "Error: EEPROM not enough space."
 msgstr ""
 
-#: ../tsbloader.py:413
+#: ../tsbloader.py:418
 #, python-format
 msgid "EEPROM write %.4X"
 msgstr ""
 
-#: ../tsbloader.py:423
+#: ../tsbloader.py:428
 msgid "Error: end of eeprom reached or verifying error"
 msgstr ""
 
-#: ../tsbloader.py:425
+#: ../tsbloader.py:430
 msgid "EEPROM Write: Undefined error."
 msgstr ""
 
-#: ../tsbloader.py:445
+#: ../tsbloader.py:450
 msgid "Read EEPROM memory page error."
 msgstr ""
 
-#: ../tsbloader.py:448
+#: ../tsbloader.py:453
 #, python-format
 msgid "EEPROM read %.4X"
 msgstr ""
 
-#: ../tsbloader.py:452
+#: ../tsbloader.py:457
 msgid "Read Error: other EEPROM page expected."
 msgstr ""
 
-#: ../tsbloader.py:474
+#: ../tsbloader.py:479
 msgid "TSB is accessible without password. "
 msgstr ""
 

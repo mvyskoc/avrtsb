@@ -1,6 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 import time
+import firmware
 from tsb_locale import *
 
 from serial import Serial
@@ -125,12 +126,16 @@ class DeviceInfo:
 
     
     def __str__(self):
+        fw_db = firmware.FirmwareDB()
+        device_list = fw_db.sig2name(self.signature)
+        device_name = ", ".join(device_list)
+        
         s = []
         s.append(_("TINY SAFE BOOTLOADER"))
         s.append(_("VERSION   : %d") % (self.tsbbuild,))
         s.append(_("STATUS    : %X") % (self.tsbstatus,))
         s.append(_("SIGNATURE : %.2X %.2X %.2X") % self.signature)
-        s.append(_("DEVICE    : %s") % (AVR_SIG2NAME.get(self.signature, (_("UNKNOWN"),_("UNKNOWN")))[1],) )
+        s.append(_("DEVICE    : %s") % (device_name,) )
         s.append(_("FLASH     : %d") % (self.flashsize,))
         s.append(_("APPFLASH  : %d") % (self.appflash,))
         s.append(_("PAGESIZE  : %d") % (self.pagesize,))
@@ -487,117 +492,5 @@ class TSBLoader:
         self.serial.close()
         self.state = TSBLoader.STATE_CLOSE
     
-
-AVR_SIG2NAME= {
-    (0x1E, 0x90, 0x01) : ('1200      ', '1200            '),
-    (0x1E, 0x91, 0x01) : ('2313      ', '2313            '),
-    (0x1E, 0x91, 0x02) : ('2323      ', '2323            '),
-    (0x1E, 0x91, 0x03) : ('2343      ', '2343            '),
-    (0x1E, 0x92, 0x01) : ('4414      ', '4414            '),
-    (0x1E, 0x92, 0x03) : ('4433      ', '4433            '),
-    (0x1E, 0x93, 0x03) : ('4434      ', '4434            '),
-    (0x1E, 0x93, 0x01) : ('8515      ', '8515            '),
-    (0x1E, 0x97, 0x03) : ('m1280     ', 'ATmega1280      '),
-    (0x1E, 0x97, 0x04) : ('m1281     ', 'ATmega1281      '),
-    (0x1E, 0x97, 0x06) : ('m1284     ', 'ATmega1284      '),
-    (0x1E, 0x97, 0x05) : ('m1284P    ', 'ATmega1284P     '),
-    (0x1E, 0xA7, 0x03) : ('m1284RFR2 ', 'ATmega1284RFR2  '),
-    (0x1E, 0x97, 0x02) : ('m128A     ', 'ATmega128       '),
-    (0x1E, 0xA7, 0x01) : ('m128RFA1  ', 'ATmega128RFA1   '),
-    (0x1E, 0xA7, 0x02) : ('m128RFR2  ', 'ATmega128RFR2   '),
-    (0x1E, 0x94, 0x04) : ('m162      ', 'ATmega162       '),
-    (0x1E, 0x94, 0x0F) : ('m164A     ', 'ATmega164       '),
-    (0x1E, 0x94, 0x0A) : ('m164PA    ', 'ATmega164P      '),
-    (0x1E, 0x94, 0x10) : ('m165A     ', 'ATmega165       '),
-    (0x1E, 0x94, 0x07) : ('m165PA    ', 'ATmega165P      '),
-    (0x1E, 0x94, 0x06) : ('m168A     ', 'ATmega168       '),
-    (0x1E, 0x94, 0x0B) : ('m168PA    ', 'ATmega168P      '),
-    (0x1E, 0x94, 0x11) : ('m169A     ', 'ATmega169       '),
-    (0x1E, 0x94, 0x05) : ('m169PA    ', 'ATmega169P      '),
-    (0x1E, 0x94, 0x03) : ('m16A      ', 'ATmega16        '),
-    (0x1E, 0x94, 0x0C) : ('m16HVA    ', 'ATmega16HV      '),
-    (0x1E, 0x94, 0x0D) : ('m16HVB    ', 'ATmega16HVB     '),
-    (0x1E, 0x94, 0x84) : ('m16M1     ', 'ATmega16M1      '),
-    (0x1E, 0x94, 0x89) : ('m16U2     ', 'ATmega16U2      '),
-    (0x1E, 0x94, 0x88) : ('m16U4     ', 'ATmega16U4      '),
-    (0x1E, 0x98, 0x01) : ('m2560     ', 'ATmega2560      '),
-    (0x1E, 0x98, 0x02) : ('m2561     ', 'ATmega2561      '),
-    (0x1E, 0xA8, 0x03) : ('m2564RFR2 ', 'ATmega2564RFR2  '),
-    (0x1E, 0xA8, 0x02) : ('m256RFR2  ', 'ATmega256RFR2   '),
-    (0x1E, 0x95, 0x15) : ('m324A     ', 'ATmega324       '),
-    (0x1E, 0x95, 0x11) : ('m324PA    ', 'ATmega324P      '),
-    (0x1E, 0x95, 0x08) : ('m324P     ', 'ATmega324P      '),
-    (0x1E, 0x95, 0x0E) : ('m3250A    ', 'ATmega3250      '),
-    (0x1E, 0x95, 0x06) : ('m3250     ', 'ATmega3250      '),
-    (0x1E, 0x95, 0x05) : ('m325A     ', 'ATmega325       '),
-    (0x1E, 0x95, 0x0D) : ('m325P     ', 'ATmega325P      '),
-    (0x1E, 0x95, 0x14) : ('m328      ', 'ATmega328       '),
-    (0x1E, 0x95, 0x0F) : ('m328P     ', 'ATmega328P      '),
-    (0x1E, 0x95, 0x0C) : ('m3290A    ', 'ATmega3290      '),
-    (0x1E, 0x95, 0x04) : ('m3290     ', 'ATmega3290      '),
-    (0x1E, 0x95, 0x03) : ('m329A     ', 'ATmega329       '),
-    (0x1E, 0x95, 0x0B) : ('m329PA    ', 'ATmega329P      '),
-    (0x1E, 0x95, 0x02) : ('m32A      ', 'ATmega32        '),
-    (0x1E, 0x95, 0x86) : ('m32C1     ', 'ATmega32C1      '),
-    (0x1E, 0x95, 0x10) : ('m32HVB    ', 'ATmega32HVB     '),
-    (0x1E, 0x95, 0x84) : ('m32M1     ', 'ATmega32M1      '),
-    (0x1E, 0x95, 0x8A) : ('m32U2     ', 'ATmega32U2      '),
-    (0x1E, 0x95, 0x87) : ('m32U4     ', 'ATmega32U4      '),
-    (0x1E, 0x95, 0x07) : ('m406      ', 'ATmega406       '),
-    (0x1E, 0x92, 0x05) : ('m48A      ', 'ATmega48        '),
-    (0x1E, 0x92, 0x0A) : ('m48PA     ', 'ATmega48P       '),
-    (0x1E, 0x96, 0x08) : ('m640      ', 'ATmega640       '),
-    (0x1E, 0x96, 0x09) : ('m644A     ', 'ATmega644       '),
-    (0x1E, 0x96, 0x0A) : ('m644PA    ', 'ATmega644P      '),
-    (0x1E, 0xA6, 0x03) : ('m644RFR2  ', 'ATmega644RFR2   '),
-    (0x1E, 0x96, 0x06) : ('m6450A    ', 'ATmega6450      '),
-    (0x1E, 0x96, 0x05) : ('m645A     ', 'ATmega645       '),
-    (0x1E, 0x96, 0x04) : ('m6490A    ', 'ATmega6490      '),
-    (0x1E, 0x96, 0x03) : ('m649A     ', 'ATmega649       '),
-    (0x1E, 0x96, 0x0B) : ('m649P     ', 'ATmega649P      '),
-    (0x1E, 0x96, 0x02) : ('m64A      ', 'ATmega64        '),
-    (0x1E, 0x96, 0x86) : ('m64C1     ', 'ATmega64C1      '),
-    (0x1E, 0x96, 0x10) : ('m64HVE2   ', 'ATmega64HVE2    '),
-    (0x1E, 0x96, 0x84) : ('m64M1     ', 'ATmega64M1      '),
-    (0x1E, 0xA6, 0x02) : ('m64RFR2   ', 'ATmega64RFR2    '),
-    (0x1E, 0x93, 0x06) : ('m8515     ', 'ATmega8515      '),
-    (0x1E, 0x93, 0x08) : ('m8535     ', 'ATmega8535      '),
-    (0x1E, 0x93, 0x0A) : ('m88A      ', 'ATmega88        '),
-    (0x1E, 0x93, 0x0F) : ('m88PA     ', 'ATmega88P       '),
-    (0x1E, 0x93, 0x07) : ('m8A       ', 'ATmega8         '),
-    (0x1E, 0x93, 0x10) : ('m8HVA     ', 'ATmega8HV       '),
-    (0x1E, 0x93, 0x89) : ('m8U2      ', 'ATmega8U2       '),
-    (0x1E, 0x90, 0x03) : ('tn10      ', 'ATtiny10        '),
-    (0x1E, 0x90, 0x07) : ('tn13A     ', 'ATtiny13        '),
-    (0x1E, 0x94, 0x12) : ('tn1634    ', 'ATtiny1634      '),
-    (0x1E, 0x94, 0x87) : ('tn167     ', 'ATtiny167       '),
-    (0x1E, 0x91, 0x0F) : ('tn20      ', 'ATtiny20        '),
-    (0x1E, 0x91, 0x0A) : ('tn2313A   ', 'ATtiny2313      '),
-    (0x1E, 0x91, 0x0B) : ('tn24A     ', 'ATtiny24        '),
-    (0x1E, 0x91, 0x08) : ('tn25      ', 'ATtiny25        '),
-    (0x1E, 0x91, 0x0C) : ('tn261A    ', 'ATtiny261       '),
-    (0x1E, 0x91, 0x09) : ('tn26      ', 'ATtiny26        '),
-    (0x1E, 0x91, 0x07) : ('tn28      ', 'ATtiny28        '),
-    (0x1E, 0x92, 0x0E) : ('tn40      ', 'ATtiny40        '),
-    (0x1E, 0x92, 0x0D) : ('tn4313    ', 'ATtiny4313      '),
-    (0x1E, 0x92, 0x0C) : ('tn43U     ', 'ATtiny43U       '),
-    (0x1E, 0x92, 0x15) : ('tn441     ', 'ATtiny441       '),
-    (0x1E, 0x92, 0x07) : ('tn44A     ', 'ATtiny44        '),
-    (0x1E, 0x92, 0x06) : ('tn45      ', 'ATtiny45        '),
-    (0x1E, 0x92, 0x08) : ('tn461A    ', 'ATtiny461       '),
-    (0x1E, 0x92, 0x09) : ('tn48      ', 'ATtiny48        '),
-    (0x1E, 0x8F, 0x0A) : ('tn4       ', 'ATtiny4         '),
-    (0x1E, 0x8F, 0x09) : ('tn5       ', 'ATtiny5         '),
-    (0x1E, 0x93, 0x14) : ('tn828     ', 'ATtiny828       '),
-    (0x1E, 0x93, 0x15) : ('tn841     ', 'ATtiny841       '),
-    (0x1E, 0x93, 0x0C) : ('tn84A     ', 'ATtiny84        '),
-    (0x1E, 0x93, 0x0B) : ('tn85      ', 'ATtiny85        '),
-    (0x1E, 0x93, 0x0D) : ('tn861A    ', 'ATtiny861       '),
-    (0x1E, 0x93, 0x87) : ('tn87      ', 'ATtiny87        '),
-    (0x1E, 0x93, 0x11) : ('tn88      ', 'ATtiny88        '),
-    (0x1E, 0x90, 0x08) : ('tn9       ', 'ATtiny9         ')
-}
-
-
 
 

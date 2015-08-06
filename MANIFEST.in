@@ -2,5 +2,6 @@ include ez_setup.py README.TXT
 include avrtsb/locale/pytsb.pot
 recursive-include avrtsb/locale *.bat *.sh
 recursive-include avrtsb/locale/*/LC_MESSAGES *.mo *.po
+recursive-include scripts *.py
 global-exclude *.*~ *.pyc *.pyo
 

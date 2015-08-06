@@ -2,9 +2,9 @@ About AVRTSB
 ============
 
 AVRTSB is Python implementation of TinySafeBoot - A tiny and safe
-Bootloader for AVR-ATtinys and ATmegas [1]. Currently only upload and
-download firmware to and from AVR MCU is supported. Affraid the
-bootloader itself is still necessary obtain from [1]. 
+Bootloader for AVR-ATtinys and ATmegas [1]. AVRTSB version 0.2
+now supports make custom firmwares. If you want compile the
+firmware yourself, please download from [1].
 
 The console script run with the command pytsb. For more
 information run: pytsb --help 
