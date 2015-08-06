@@ -328,7 +328,7 @@ class TSBLoader:
         is used for write into the FLASH memory."""
 
         #Every instructions has same size 2bytes
-        opcodes = [s[i]+s[i+1] for i in xrange(0, len(s), 2)]
+        opcodes = [data[i]+data[i+1] for i in xrange(0, len(data), 2)]
         return '\xE8\x95' in opcodes
     
     def flashRead(self):
@@ -366,7 +366,8 @@ class TSBLoader:
         #Pad data to all page
         round_data = int(math.ceil(len(data) / float(pagesize)) * pagesize)
         data = data.ljust(round_data, '\xFF')
-        
+	print "Len(data)=%d, pagesize=%d" % (len(data), pagesize)        
+
         if len(data) > self.device_info.appflash:
             raise TSBException(_("Error: Not enough space."))
         
@@ -376,7 +377,8 @@ class TSBLoader:
         self.waitRespond( TSB_REQUEST, FLASH_PAGEWRITE_TIMEOUT*pages_count) 
 
         pagenum = 0
-        while (pagenum * pagesize) < len(data):
+        # while (pagenum * pagesize) <= len(data):
+        for pagenum in xrange(len(data) / pagesize):
             pagedata = data[pagenum*pagesize : (pagenum+1)*pagesize]
             self.sendCommand(TSB_CONFIRM)
             self.sendCommand(pagedata)
@@ -387,7 +389,6 @@ class TSBLoader:
             #Function read has timeout only for receive cca 10 characters
             #this is 100ms for 9600 bps
             rx = self.read(1, FLASH_PAGEWRITE_TIMEOUT)   #Wait up to 5ms, read 1 byte
-            pagenum += 1
             
             if rx == TSB_CONFIRM:
                 raise TSBException(_("Error: end of appflash reached or verifying error"))
@@ -395,7 +396,8 @@ class TSBLoader:
                 raise TSBException(_("FLASH Write: Undefined error."))
 
         self.sendCommand(TSB_REQUEST)
-        self.waitRespond(TSB_CONFIRM)
+        # For AVR Tiny must wait longer time
+        self.waitRespond(TSB_CONFIRM, FLASH_PAGEWRITE_TIMEOUT)
 
     def flashErase(self):
         self.flashWrite('')
@@ -490,6 +492,7 @@ class TSBLoader:
   
 
     def close(self):
+        self.sendCommand('q')
         self.resetMCU()
         self.serial.close()
         self.state = TSBLoader.STATE_CLOSE

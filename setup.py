@@ -9,7 +9,7 @@ def read(fname):
 
 setup(
     name = "avrtsb",
-    version = "0.2.2",
+    version = "0.2.3",
     author = "Martin Vyskočil",
     author_email = "m.vyskoc@seznam.cz",
     description = ("Python version of TinySafeBoot"

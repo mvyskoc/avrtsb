@@ -11,6 +11,8 @@ from cStringIO import StringIO
 import cPickle as pickle
 import gzip
 import warnings
+import struct
+import math
 
 TSBDB_FILENAME = "tsb_db.pklz"
 TSBDB_PATH = os.path.join( os.path.dirname(__file__), TSBDB_FILENAME )
@@ -159,6 +161,46 @@ class Firmware(object):
         ihex = self.getihex()
         ihex.tofile(filename, format=format)
 
+    def addTSBInstallerChecksum(self, op_list):
+        # TSB Installer checksum is at the end of the first page
+        # Program structure:
+        # .org 0
+        # rjmp 
+        # 0xFF, ... 0xFF
+        # ...
+        # 0xFF, ... 0xFF
+        # rjmp
+        # Checksum 2 bytes
+
+        try:
+            i = 1
+            while (i < 128) and (op_list[i] == "\xFF\xFF"):
+                i += 1
+        except ValueError, IndexError:
+            # No change, no TSB Installer
+            return op_list
+
+        # NO TSB Firmware Installer
+        if (i < 8) or (i > 128):
+            return op_list
+        
+        # Index i point to rjmp before Checksum
+        page_size = i+2
+        
+        checksum = 0
+        for ch in op_list[page_size:]:
+            checksum += ord(ch[0]) + ord(ch[1])
+            checksum &= 0xffff
+
+        #Checksum is counted through full pages - we check If the firmware is
+        #is aligned to full pages. If not we fill the rest with 0xff, 0xff values
+        aligned_size = int( math.ceil(len(op_list) / page_size) * page_size )
+        checksum = checksum + (aligned_size - len(op_list))*(0xff+0xff)
+        checksum &= 0xffff
+        
+        op_list[page_size-1] = struct.pack('>H', checksum)
+        return op_list
+        
     def set_rxtx(self, rxdtxd):
         ports = "".join(self.fw_info.port.keys())
         fmt = "[%s][0-7][%s][0-7]" % (ports, ports)
@@ -197,6 +239,7 @@ class Firmware(object):
         if self.fw_info.tsb_fwconf:
             op_list.extend(["TSB", self.fw_info.tsb_fwconf])
 
+        self.addTSBInstallerChecksum(op_list)
         return ''.join(op_list)
         
     def getihex(self):

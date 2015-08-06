@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyTSB 0.2\n"
 "Report-Msgid-Bugs-To: m.vyskoc@seznam.cz\n"
-"POT-Creation-Date: 2015-04-24 21:44+0200\n"
+"POT-Creation-Date: 2015-04-27 21:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -178,16 +178,12 @@ msgstr ""
 msgid "Error: output file \"%s\" already exist. Use --force option or delete the existing file."
 msgstr ""
 
-#: ../pytsb.py:308
-msgid "Flash ROM device memory"
-msgstr ""
-
 #: ../pytsb.py:313 ../pytsb.py:365
 msgid "Data verification OK"
 msgstr ""
 
 #: ../pytsb.py:315
-msgid "Flash ROM device verification error"
+msgid "Flash ROM device verification error\n"
 msgstr ""
 
 #: ../pytsb.py:327
@@ -200,12 +196,8 @@ msgstr ""
 msgid "Firmware includes SPM instruction. Continue to write to the device flash ROM --force option is used."
 msgstr ""
 
-#: ../pytsb.py:360
-msgid "EEPROM device memory"
-msgstr ""
-
 #: ../pytsb.py:367
-msgid "EEPROM verification error"
+msgid "EEPROM verification error\n"
 msgstr ""
 
 #: ../pytsb.py:373
@@ -378,7 +370,7 @@ msgstr ""
 msgid "User data write error."
 msgstr ""
 
-#: ../tsbloader.py:307 ../tsbloader.py:478
+#: ../tsbloader.py:307 ../tsbloader.py:480
 msgid "One-wire interface detected."
 msgstr ""
 
@@ -407,54 +399,54 @@ msgstr ""
 msgid "Read Error: other memory page expected."
 msgstr ""
 
-#: ../tsbloader.py:371
+#: ../tsbloader.py:372
 msgid "Error: Not enough space."
 msgstr ""
 
-#: ../tsbloader.py:383
+#: ../tsbloader.py:385
 #, python-format
 msgid "Flash write %.4X"
 msgstr ""
 
-#: ../tsbloader.py:393
+#: ../tsbloader.py:394
 msgid "Error: end of appflash reached or verifying error"
 msgstr ""
 
-#: ../tsbloader.py:395
+#: ../tsbloader.py:396
 msgid "FLASH Write: Undefined error."
 msgstr ""
 
-#: ../tsbloader.py:408
+#: ../tsbloader.py:410
 msgid "Error: EEPROM not enough space."
 msgstr ""
 
-#: ../tsbloader.py:420
+#: ../tsbloader.py:422
 #, python-format
 msgid "EEPROM write %.4X"
 msgstr ""
 
-#: ../tsbloader.py:430
+#: ../tsbloader.py:432
 msgid "Error: end of eeprom reached or verifying error"
 msgstr ""
 
-#: ../tsbloader.py:432
+#: ../tsbloader.py:434
 msgid "EEPROM Write: Undefined error."
 msgstr ""
 
-#: ../tsbloader.py:452
+#: ../tsbloader.py:454
 msgid "Read EEPROM memory page error."
 msgstr ""
 
-#: ../tsbloader.py:455
+#: ../tsbloader.py:457
 #, python-format
 msgid "EEPROM read %.4X"
 msgstr ""
 
-#: ../tsbloader.py:459
+#: ../tsbloader.py:461
 msgid "Read Error: other EEPROM page expected."
 msgstr ""
 
-#: ../tsbloader.py:481
+#: ../tsbloader.py:483
 msgid "TSB is accessible without password. "
 msgstr ""
 

@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: avrtsb
-Version: 0.2.2
+Version: 0.2.3
 Summary: Python version of TinySafeBootA tiny and safe Bootloader for AVR-ATtinys and ATmegas
 Home-page: UNKNOWN
 Author: Martin Vyskočil

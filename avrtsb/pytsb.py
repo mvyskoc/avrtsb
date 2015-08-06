@@ -305,14 +305,14 @@ class ConsoleApp():
         ihex_flash.puts(0, flash_data)
         
         sio = StringIO()
-        diff_dumps(ihex_flash, ihex_cmp, tofile=sio, name1=_("Flash ROM device memory"), name2=cmp_filename)
+        diff_dumps(ihex_flash, ihex_cmp, tofile=sio, name1="Flash ROM device memory", name2=cmp_filename)
         diff_report = sio.getvalue(False)
         sio.close()
         
         if diff_report.strip() == "":
             print _("Data verification OK")
         else:
-            stderr.write(_("Flash ROM device verification error"))
+            stderr.write(_("Flash ROM device verification error\n"))
             print diff_report
         
     def flashErase(self):
@@ -357,14 +357,14 @@ class ConsoleApp():
         ihex_eeprom.puts(0, eeprom_data)        
         
         sio = StringIO()
-        diff_dumps(ihex_eeprom, ihex_cmp, tofile=sio, name1=_("EEPROM device memory"), name2=cmp_filename)
+        diff_dumps(ihex_eeprom, ihex_cmp, tofile=sio, name1="EEPROM device memory", name2=cmp_filename)
         diff_report = sio.getvalue(False)
         sio.close()
         
         if diff_report.strip() == "":
             print _("Data verification OK")
         else:
-            stderr.write(_("EEPROM verification error"))
+            stderr.write(_("EEPROM verification error\n"))
             print diff_report
 
             
@@ -483,10 +483,10 @@ class ConsoleApp():
 
 def main():
     app = ConsoleApp()
-    #app.run()
+    app.run()
     try:
-        #pass
-        app.run()
+        pass
+        #app.run()
     except Exception as e:
         print e.message
     finally:

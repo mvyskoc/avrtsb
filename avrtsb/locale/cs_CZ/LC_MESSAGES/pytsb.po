@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyTSB 0.2\n"
 "Report-Msgid-Bugs-To: m.vyskoc@seznam.cz\n"
-"POT-Creation-Date: 2015-04-24 21:44+0200\n"
+"POT-Creation-Date: 2015-04-27 21:18+0200\n"
 "PO-Revision-Date: 2015-03-31 18:30+0100\n"
 "Last-Translator: Martin Vyskočil <m.vyskoc@seznam.cz>\n"
 "Language-Team: cs_CZ <LL@li.org>\n"
@@ -238,17 +238,13 @@ msgstr ""
 "Chyba: výstupní soubor \"%s\" už existuje. Použijdte parameter --force "
 "nebo smažte existující soubor"
 
-#: ../pytsb.py:308
-msgid "Flash ROM device memory"
-msgstr "Pamět zařízení flash ROM"
-
 #: ../pytsb.py:313 ../pytsb.py:365
 msgid "Data verification OK"
 msgstr "Ověření dat OK"
 
 #: ../pytsb.py:315
-msgid "Flash ROM device verification error"
-msgstr "Chyba ověření paměti flash ROM"
+msgid "Flash ROM device verification error\n"
+msgstr "Chyba ověření paměti flash ROM\n"
 
 #: ../pytsb.py:327
 msgid ""
@@ -268,13 +264,9 @@ msgstr ""
 "Firmware obsahuje SPM instrukce. Pokračuji v nahrávání do zařízení "
 "vynuceno volbou --force"
 
-#: ../pytsb.py:360
-msgid "EEPROM device memory"
-msgstr "Paměť zařízení EEPROM"
-
 #: ../pytsb.py:367
-msgid "EEPROM verification error"
-msgstr "Chyba ověřování paměti EEPROM"
+msgid "EEPROM verification error\n"
+msgstr "Chyba ověřování paměti EEPROM\n"
 
 #: ../pytsb.py:373
 msgid "EEPROM Erase OK"
@@ -449,7 +441,7 @@ msgstr "Chyba čtení uživatelských dat."
 msgid "User data write error."
 msgstr "Chyba zápisu uživatelských dat."
 
-#: ../tsbloader.py:307 ../tsbloader.py:478
+#: ../tsbloader.py:307 ../tsbloader.py:480
 msgid "One-wire interface detected."
 msgstr "Detekováno jednotrátové sériové rozhranní."
 
@@ -478,54 +470,54 @@ msgstr "Čtení flash ROM %.4X"
 msgid "Read Error: other memory page expected."
 msgstr "Chyba čtení: očekávána další paměťová stránka."
 
-#: ../tsbloader.py:371
+#: ../tsbloader.py:372
 msgid "Error: Not enough space."
 msgstr "Chyba: nedostatek místa."
 
-#: ../tsbloader.py:383
+#: ../tsbloader.py:385
 #, python-format
 msgid "Flash write %.4X"
 msgstr "Zápis flash ROM %.4X"
 
-#: ../tsbloader.py:393
+#: ../tsbloader.py:394
 msgid "Error: end of appflash reached or verifying error"
 msgstr "Chyba: dosažen konec paměti flash ROM nebo chyba ověření "
 
-#: ../tsbloader.py:395
+#: ../tsbloader.py:396
 msgid "FLASH Write: Undefined error."
 msgstr "Zápis flash ROM: neznámá chyba"
 
-#: ../tsbloader.py:408
+#: ../tsbloader.py:410
 msgid "Error: EEPROM not enough space."
 msgstr "Chyba: nedostatek místa EEPROM"
 
-#: ../tsbloader.py:420
+#: ../tsbloader.py:422
 #, python-format
 msgid "EEPROM write %.4X"
 msgstr "EEPROM zápis %.4X"
 
-#: ../tsbloader.py:430
+#: ../tsbloader.py:432
 msgid "Error: end of eeprom reached or verifying error"
 msgstr "Chyba: dosažen konec paměti EEPROM nebo chyba ověření."
 
-#: ../tsbloader.py:432
+#: ../tsbloader.py:434
 msgid "EEPROM Write: Undefined error."
 msgstr "Chyba zápisu EEPROM - neznámá chyba."
 
-#: ../tsbloader.py:452
+#: ../tsbloader.py:454
 msgid "Read EEPROM memory page error."
 msgstr "Chyba čtení stránky paměti EEPROM."
 
-#: ../tsbloader.py:455
+#: ../tsbloader.py:457
 #, python-format
 msgid "EEPROM read %.4X"
 msgstr "Čtení EEPROM %.4X"
 
-#: ../tsbloader.py:459
+#: ../tsbloader.py:461
 msgid "Read Error: other EEPROM page expected."
 msgstr "Chyba čtení EEPROM, očekávána další stránka."
 
-#: ../tsbloader.py:481
+#: ../tsbloader.py:483
 msgid "TSB is accessible without password. "
 msgstr "TSB přístupné bez hesla."
 
