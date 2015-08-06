@@ -1,0 +1,14 @@
+AVRTSB 0.2.2  2015-04-24 (development version)
+  Fixed many critical errors - firmware uploading, verification
+  Change of userdata everytimes throw exception - fixed
+  Fixed translation
+
+AVRTSB 0.2.1 (development version)
+  Fixed - missing firmware database in sdist 
+
+AVRTSB 0.2 (development version)
+  Added option Make Custom Firmware
+  Fixed some issues with reading IntelHex files
+
+AVRTSB 0.1 (development version)
+  The initial version. Only communication with TSB loader supported.

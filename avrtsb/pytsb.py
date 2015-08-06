@@ -277,7 +277,7 @@ class ConsoleApp():
     
     def showDeviceInfo(self):
         print
-        print self.tsb.device_info
+        print self.tsb.device_info.tostr()
         print
         
     def flashRead(self):
@@ -302,7 +302,7 @@ class ConsoleApp():
         
         flash_data = self.tsb.flashRead()
         ihex_flash = IntelHex()
-        ihex_flash(0, flash_data)
+        ihex_flash.puts(0, flash_data)
         
         sio = StringIO()
         diff_dumps(ihex_flash, ihex_cmp, tofile=sio, name1=_("Flash ROM device memory"), name2=cmp_filename)
@@ -322,7 +322,7 @@ class ConsoleApp():
         ihex = self.readDataFromFile(self.args.flash_write[0])
         data = ihex.tobinstr(0)
 
-        if (self.tinymega==0) and self.tsb.check4SPM(data):
+        if (self.tsb.device_info.tinymega==0) and self.tsb.check4SPM(data):
             if (not self.args.force):
                 raise AppException(_("Warning: firmware includes SPM instruction, which can be dangerous for bootloader.\n"+
                                      "Use --force option if you really wish to write to device flash ROM.")
@@ -423,7 +423,7 @@ class ConsoleApp():
         self.tsb.writeUserData()
         print _("Write user data OK")
         print _("Timeout factor %d") % (self.tsb.device_info.timeout,)
-        print _("Password: %s") % (self.password,)
+        print _("Password: %s") % (self.tsb.device_info.password,)
 
         
     def emergencyErase(self):
@@ -483,7 +483,9 @@ class ConsoleApp():
 
 def main():
     app = ConsoleApp()
+    #app.run()
     try:
+        #pass
         app.run()
     except Exception as e:
         print e.message

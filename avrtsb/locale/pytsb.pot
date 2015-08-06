@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PyTSB 0.2\n"
 "Report-Msgid-Bugs-To: m.vyskoc@seznam.cz\n"
-"POT-Creation-Date: 2015-04-22 11:07+0200\n"
+"POT-Creation-Date: 2015-04-24 21:44+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -279,178 +279,182 @@ msgstr ""
 msgid "TSB firmware saved to file: '%s'"
 msgstr ""
 
-#: ../tsbloader.py:56
+#: ../tsbloader.py:57
 msgid "Bad info data block received !"
 msgstr ""
 
-#: ../tsbloader.py:72
+#: ../tsbloader.py:73
 msgid "Pagesize not valid - abort."
 msgstr ""
 
-#: ../tsbloader.py:84
+#: ../tsbloader.py:85
 msgid "Error: Confirmation of header expected."
 msgstr ""
 
-#: ../tsbloader.py:113
+#: ../tsbloader.py:114
 msgid "Timeout factor must be in range 8..255"
 msgstr ""
 
-#: ../tsbloader.py:125
+#: ../tsbloader.py:126
 #, python-format
 msgid "Maximum lenght of password is %d"
 msgstr ""
 
-#: ../tsbloader.py:134
-msgid "TINY SAFE BOOTLOADER"
-msgstr ""
-
 #: ../tsbloader.py:135
-#, python-format
-msgid "VERSION   : %d"
+msgid "TINY SAFE BOOTLOADER"
 msgstr ""
 
 #: ../tsbloader.py:136
 #, python-format
-msgid "STATUS    : %X"
+msgid "VERSION   : %d"
 msgstr ""
 
 #: ../tsbloader.py:137
 #, python-format
-msgid "SIGNATURE : %.2X %.2X %.2X"
+msgid "STATUS    : %X"
 msgstr ""
 
 #: ../tsbloader.py:138
 #, python-format
-msgid "DEVICE    : %s"
+msgid "SIGNATURE : %.2X %.2X %.2X"
 msgstr ""
 
 #: ../tsbloader.py:139
 #, python-format
-msgid "FLASH     : %d"
+msgid "DEVICE    : %s"
 msgstr ""
 
 #: ../tsbloader.py:140
 #, python-format
-msgid "APPFLASH  : %d"
+msgid "FLASH     : %d"
 msgstr ""
 
 #: ../tsbloader.py:141
 #, python-format
-msgid "PAGESIZE  : %d"
+msgid "APPFLASH  : %d"
 msgstr ""
 
 #: ../tsbloader.py:142
 #, python-format
-msgid "EEPROM    : %d"
+msgid "PAGESIZE  : %d"
 msgstr ""
 
 #: ../tsbloader.py:143
 #, python-format
-msgid "APPJUMP   : %.4X"
+msgid "EEPROM    : %d"
 msgstr ""
 
 #: ../tsbloader.py:144
 #, python-format
+msgid "APPJUMP   : %.4X"
+msgstr ""
+
+#: ../tsbloader.py:145
+#, python-format
 msgid "TIMEOUT   : %d"
 msgstr ""
 
-#: ../tsbloader.py:185
+#: ../tsbloader.py:186
 msgid "reset_line attribute can have only TSBLoader.DTR, TSBLoader.RTS value."
 msgstr ""
 
-#: ../tsbloader.py:196
+#: ../tsbloader.py:197
 msgid "reset_active attribute can have only values only 0, 1"
 msgstr ""
 
-#: ../tsbloader.py:269
+#: ../tsbloader.py:270
 msgid "Timeout error - TSB does not respond"
 msgstr ""
 
-#: ../tsbloader.py:271
+#: ../tsbloader.py:272
 msgid "Comunication error: invalid answer from TSB"
 msgstr ""
 
-#: ../tsbloader.py:280
+#: ../tsbloader.py:281
 msgid "User data read error."
 msgstr ""
 
-#: ../tsbloader.py:304 ../tsbloader.py:476
+#: ../tsbloader.py:297
+msgid "User data write error."
+msgstr ""
+
+#: ../tsbloader.py:307 ../tsbloader.py:478
 msgid "One-wire interface detected."
 msgstr ""
 
-#: ../tsbloader.py:311
+#: ../tsbloader.py:314
 msgid "Error: Device does not respond."
 msgstr ""
 
-#: ../tsbloader.py:313
+#: ../tsbloader.py:316
 msgid " Please check your password."
 msgstr ""
 
-#: ../tsbloader.py:315
+#: ../tsbloader.py:318
 msgid " Maybe password is required."
 msgstr ""
 
-#: ../tsbloader.py:345
+#: ../tsbloader.py:348
 msgid "Read flash memory page error."
 msgstr ""
 
-#: ../tsbloader.py:348
+#: ../tsbloader.py:351
 #, python-format
 msgid "Flash read %.4X"
 msgstr ""
 
-#: ../tsbloader.py:352
+#: ../tsbloader.py:355
 msgid "Read Error: other memory page expected."
 msgstr ""
 
-#: ../tsbloader.py:369
+#: ../tsbloader.py:371
 msgid "Error: Not enough space."
 msgstr ""
 
-#: ../tsbloader.py:381
+#: ../tsbloader.py:383
 #, python-format
 msgid "Flash write %.4X"
 msgstr ""
 
-#: ../tsbloader.py:391
+#: ../tsbloader.py:393
 msgid "Error: end of appflash reached or verifying error"
 msgstr ""
 
-#: ../tsbloader.py:393
+#: ../tsbloader.py:395
 msgid "FLASH Write: Undefined error."
 msgstr ""
 
-#: ../tsbloader.py:406
+#: ../tsbloader.py:408
 msgid "Error: EEPROM not enough space."
 msgstr ""
 
-#: ../tsbloader.py:418
+#: ../tsbloader.py:420
 #, python-format
 msgid "EEPROM write %.4X"
 msgstr ""
 
-#: ../tsbloader.py:428
+#: ../tsbloader.py:430
 msgid "Error: end of eeprom reached or verifying error"
 msgstr ""
 
-#: ../tsbloader.py:430
+#: ../tsbloader.py:432
 msgid "EEPROM Write: Undefined error."
 msgstr ""
 
-#: ../tsbloader.py:450
+#: ../tsbloader.py:452
 msgid "Read EEPROM memory page error."
 msgstr ""
 
-#: ../tsbloader.py:453
+#: ../tsbloader.py:455
 #, python-format
 msgid "EEPROM read %.4X"
 msgstr ""
 
-#: ../tsbloader.py:457
+#: ../tsbloader.py:459
 msgid "Read Error: other EEPROM page expected."
 msgstr ""
 
-#: ../tsbloader.py:479
+#: ../tsbloader.py:481
 msgid "TSB is accessible without password. "
 msgstr ""
 

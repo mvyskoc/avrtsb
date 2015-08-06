@@ -2,6 +2,7 @@
 # -*- coding: UTF-8 -*-
 import time
 import firmware
+import math
 from tsb_locale import *
 
 from serial import Serial
@@ -86,7 +87,7 @@ class DeviceInfo:
         
     def parseUserData(self, userdata):
         self.appjump, self.timeout = unpack("HB", userdata[0:3])
-        self.password = userdata[3:]
+        self.password = userdata[3:].strip('\xFF')
 
         if self.tinymega == 1:
             self.appjump = 0 #ATMega use FUSE bits for change start position
@@ -125,7 +126,7 @@ class DeviceInfo:
             raise ValueError(_("Maximum lenght of password is %d") % (self.pagesize-TSB_USER_HEADER_SIZE,) )
 
     
-    def __str__(self):
+    def tostr(self):
         fw_db = firmware.FirmwareDB()
         device_list = fw_db.sig2name(self.signature)
         device_name = ", ".join(device_list)
@@ -142,7 +143,7 @@ class DeviceInfo:
         s.append(_("EEPROM    : %d") % (self.eepromsize,))
         s.append(_("APPJUMP   : %.4X") % (self.appjump,))  #Userdata
         s.append(_("TIMEOUT   : %d") % (self.timeout,))    #Userdata
-        return '\n'.join(s)
+        return u'\n'.join(s)
         
     def word2Date(self, in_word):
         result = (in_word & 31 ) + \
@@ -290,8 +291,10 @@ class TSBLoader:
         self.waitRespond( TSB_REQUEST )
         self.sendCommand( TSB_CONFIRM )
         self.sendCommand( user_data )
+
         rx = self.read(1, FLASH_PAGEWRITE_TIMEOUT)
-        self.waitRespond( TSB_CONFIRM ) 
+        if rx == TSB_CONFIRM:
+           raise TSBException(_("User data write error."))
 
     def activateTSB(self):
         self.resetMCU()
@@ -361,8 +364,7 @@ class TSBLoader:
         pagesize = self.device_info.pagesize
         
         #Pad data to all page
-        round_data = ( (len(data)-1) / pagesize+1 ) * pagesize
-        round_data = min(0, round_data)
+        round_data = int(math.ceil(len(data) / float(pagesize)) * pagesize)
         data = data.ljust(round_data, '\xFF')
         
         if len(data) > self.device_info.appflash:

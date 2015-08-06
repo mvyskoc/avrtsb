@@ -1,4 +1,4 @@
-include ez_setup.py README.TXT
+include ez_setup.py README.TXT CHANGELOG.TXT
 include avrtsb/locale/pytsb.pot
 include avrtsb/tsb_db.pklz
 recursive-include avrtsb/locale *.bat *.sh
