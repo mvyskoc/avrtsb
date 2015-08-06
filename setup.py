@@ -9,7 +9,7 @@ def read(fname):
 
 setup(
     name = "avrtsb",
-    version = "0.2",
+    version = "0.2.1",
     author = "Martin Vyskočil",
     author_email = "m.vyskoc@seznam.cz",
     description = ("Python version of TinySafeBoot"
@@ -18,7 +18,7 @@ setup(
     keywords = "TinySafeBoot, AVR, bootloader",
     #url = "http://packages.python.org/an_example_pypi_project",
     packages=['avrtsb'],
-    package_data={'avrtsb': ['global.dat', 'locale/*/LC_MESSAGES/*.mo']},
+    package_data={'avrtsb': ['tsb_db.pklz', 'locale/*/LC_MESSAGES/*.mo']},
     long_description=read('README.TXT'),
     zip_safe=False, 
     classifiers=[
