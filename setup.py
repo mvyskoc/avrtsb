@@ -86,7 +86,7 @@ setup(
     license = "GPLv3",
     keywords = "TinySafeBoot, AVR, bootloader",
     url = "http://github.com/mvyskoc/avrtsb",
-    download_url="https://github.com/mvyskoc/avrtsb/tarball/master",
+    download_url="https://github.com/mvyskoc/avrtsb/tarball/v0.2.5",
     packages=['avrtsb'],
     package_data={'avrtsb': ['tsb_db.pklz', 'locale/*/LC_MESSAGES/*.mo']},
     long_description=read('README.md'),
