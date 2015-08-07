@@ -248,7 +248,7 @@ class ConsoleApp():
         
         if args.flash_verify:
             self.flashVerify()
-        
+            
         #EEPROM Programming
         if args.eeprom_read:
             self.eepromRead()
@@ -552,7 +552,7 @@ class ConsoleApp():
 
 def main():
     app = ConsoleApp()
-    #app.run()
+    #app.run() 
     try:
         pass
         app.run()
