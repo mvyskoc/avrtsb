@@ -78,7 +78,7 @@ class build_py(_build_py):
 
 setup(
     name = "avrtsb",
-    version = "0.2.5",
+    version = "0.2.5a2",
     author = "Martin Vyskočil",
     author_email = "m.vyskoc@seznam.cz",
     description = ("Python version of TinySafeBoot"
@@ -86,7 +86,7 @@ setup(
     license = "GPLv3",
     keywords = "TinySafeBoot, AVR, bootloader",
     url = "http://github.com/mvyskoc/avrtsb",
-    download_url="https://github.com/mvyskoc/avrtsb/tarball/v0.2.5",
+    download_url="https://github.com/mvyskoc/avrtsb/tarball/v0.2.5a2",
     packages=['avrtsb'],
     package_data={'avrtsb': ['tsb_db.pklz', 'locale/*/LC_MESSAGES/*.mo']},
     long_description=read('README.md'),
