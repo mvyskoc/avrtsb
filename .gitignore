@@ -48,3 +48,5 @@ pip-delete-this-directory.txt
 
 firmware/
 
+0.2.4
+setuptools*.zip
