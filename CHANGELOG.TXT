@@ -1,4 +1,28 @@
-VRTSB 0.2.4  2015-04-29 (develompent version)
+AVRTSB 0.2.6  2018-03-07
+  * TinySafeBoot firmware database updated to version 20161027
+
+  * Case insensitive MCU type name is used when TSB firmware is generated
+
+  * Add new command --reset-cmd, send byte sequence for start TSB bootloader.
+    The command must be processed from the user application in the MCU.
+
+  * tsbloader.serial.timout increased to fixed time 0.05 seconds
+
+  * Fixed writting to eeprom, increased timeout for write eeprom data. Write one
+    byte to eeprom takes 8.5ms
+
+  * New arguments --flash-file-format, --eeprom-file-format for specification
+    of file type for exchange data. Before only all files with .hex extension
+    were considered as IntelHex and all others as binary.
+
+  * Add progress bar
+
+  * Fix translation bugfixes 
+
+  * Change setup script, babel package is necessary only for update message
+    catalog
+
+AVRTSB 0.2.4  2015-04-29 (develompent version)
   * Add -t/--timout option, change default value from 100ms to 200ms
   * tsb_locale - If is not possible find default locale (function
   getdefaultlocale returns None) select as default en_US. 

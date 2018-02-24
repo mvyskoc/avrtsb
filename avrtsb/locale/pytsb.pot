@@ -1,29 +1,51 @@
 # Translations template for avrtsb.
-# Copyright (C) 2015 ORGANIZATION
+# Copyright (C) 2018 ORGANIZATION
 # This file is distributed under the same license as the avrtsb project.
-# FIRST AUTHOR <EMAIL@ADDRESS>, 2015.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2018.
 #
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: avrtsb 0.2.5\n"
+"Project-Id-Version: avrtsb 0.2.6\n"
 "Report-Msgid-Bugs-To: m.vyskoc@seznam.cz\n"
-"POT-Creation-Date: 2015-08-07 09:28+0200\n"
+"POT-Creation-Date: 2018-03-07 19:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 1.3\n"
+"Generated-By: Babel 2.5.3\n"
 
-#: avrtsb/pytsb.py:37
+#: avrtsb/pytsb.py:55
+msgid "Not supported HEX file format"
+msgstr ""
+
+#: avrtsb/pytsb.py:75
+msgid "Input file \"{}\" not found."
+msgstr ""
+
+#: avrtsb/pytsb.py:86
+msgid "\"{}\" Unsupported input file format"
+msgstr ""
+
+#: avrtsb/pytsb.py:100
+msgid ""
+"Error: output file \"{}\" already exist. Use --force option or delete the"
+" existing file."
+msgstr ""
+
+#: avrtsb/pytsb.py:120
+msgid "\"{}\" Unsupported output file format"
+msgstr ""
+
+#: avrtsb/pytsb.py:137
 msgid ""
 "Console Tool for TinySafeBoot, the tiny and safe AVR bootloader.\n"
 "----------------------------------------------------------------"
 msgstr ""
 
-#: avrtsb/pytsb.py:39
+#: avrtsb/pytsb.py:139
 #, python-format
 msgid ""
 "For more information use:\n"
@@ -45,70 +67,76 @@ msgid ""
 "\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:60
+#: avrtsb/pytsb.py:160
 msgid "Connect to bootloader"
 msgstr ""
 
-#: avrtsb/pytsb.py:64
+#: avrtsb/pytsb.py:164
 msgid "Make custom TSB firmware"
 msgstr ""
 
-#: avrtsb/pytsb.py:69
+#: avrtsb/pytsb.py:169
 msgid "Connection parameters"
 msgstr ""
 
-#: avrtsb/pytsb.py:71
+#: avrtsb/pytsb.py:171
 #, python-format
 msgid ""
 "Device name of genuine or virtual serial port. Use %(prog)s help for list"
 " of available devices"
 msgstr ""
 
-#: avrtsb/pytsb.py:74
+#: avrtsb/pytsb.py:174
 msgid "Set the baudrate of the serial port. Default 9600 bps"
 msgstr ""
 
-#: avrtsb/pytsb.py:77
+#: avrtsb/pytsb.py:177
 msgid "Password for accessing bootloader"
 msgstr ""
 
-#: avrtsb/pytsb.py:80
+#: avrtsb/pytsb.py:180
 msgid ""
-"Delay in ms after reset before TSB activation. Default value is 200 ms. "
-"If you before set very low TIMOUT_FACTOR, you may need decrease this "
-"value. Very low value cause troublebecause of AVR startup time."
+"After MCU reset wait specified time before the TSB activation sequence is"
+" sent. Suitable value with the respect to TIMEOUT_FACTOR must be chosen. "
+"Default value is 200 ms"
 msgstr ""
 
-#: avrtsb/pytsb.py:87
+#: avrtsb/pytsb.py:190
 msgid "Reset MCU with DTR line active in LEVEL. Default: --reset-dtr 1"
 msgstr ""
 
-#: avrtsb/pytsb.py:91
+#: avrtsb/pytsb.py:194
 msgid "Reset MCU with RTS line active in LEVEL"
 msgstr ""
 
-#: avrtsb/pytsb.py:94
+#: avrtsb/pytsb.py:198
+msgid ""
+"Send given command for reset MCU, it must be supported by the "
+"application. The option cannot be used together with the RTS/DTR reset."
+msgstr ""
+
+#: avrtsb/pytsb.py:205
 msgid "Show bootloader and device info"
 msgstr ""
 
-#: avrtsb/pytsb.py:97
+#: avrtsb/pytsb.py:208
 msgid "TinySafeBoot settings"
 msgstr ""
 
-#: avrtsb/pytsb.py:100
+#: avrtsb/pytsb.py:211
 msgid "Change password for activating TinySafeBoot loader."
 msgstr ""
 
-#: avrtsb/pytsb.py:104
+#: avrtsb/pytsb.py:215
 msgid ""
 "Change the time how long time the bootloader will wait for activation "
 "before the downloaded firmware is started. The waiting time is given by "
 "number in range 8..255 (approx 0.1 up to many seconds). The "
-"TIMEOUT_FACTOR can be computed from give time in milliseconds and MCU "
-"frequency in MHz or Hz."
+"TIMEOUT_FACTOR can be computed from given time in milliseconds and MCU "
+"frequency in MHz or Hz. The delay shall not be shorter than 100ms."
 msgstr ""
 
-#: avrtsb/pytsb.py:111
+#: avrtsb/pytsb.py:223
 msgid ""
 "Emergency erase after lost password. Reset the contents of the flash ROM "
 "and EEPROM to the value '0xff'. The bootloader is not deleted, only TSB "
@@ -116,424 +144,476 @@ msgid ""
 "is time demanding from 10 s up to 1 minute. "
 msgstr ""
 
-#: avrtsb/pytsb.py:117
+#: avrtsb/pytsb.py:229
 msgid "FLASH programming"
 msgstr ""
 
-#: avrtsb/pytsb.py:120
+#: avrtsb/pytsb.py:232
 msgid "Read flash ROM device memory and write to the specified file"
 msgstr ""
 
-#: avrtsb/pytsb.py:123
+#: avrtsb/pytsb.py:235
 msgid "This will reset the content of the flash ROM to the value '0xff'"
 msgstr ""
 
-#: avrtsb/pytsb.py:127
+#: avrtsb/pytsb.py:239
 msgid "Read the specified file and write it to the flash ROM device memory"
 msgstr ""
 
-#: avrtsb/pytsb.py:131
+#: avrtsb/pytsb.py:244
+msgid ""
+"Format of the file to read from or write into the flash. Default value is"
+" auto. For list of available options use -fwf help"
+msgstr ""
+
+#: avrtsb/pytsb.py:250
 msgid ""
 "Read the specified file and compare it with the flash ROM device memory. "
 "When it is used with the option --flash-write than the FILENAME can be "
 "omitted."
 msgstr ""
 
-#: avrtsb/pytsb.py:135
+#: avrtsb/pytsb.py:254
 msgid "EEPROM programming"
 msgstr ""
 
-#: avrtsb/pytsb.py:138
+#: avrtsb/pytsb.py:257
 msgid "Read EEPROM device memory and write to the specified file"
 msgstr ""
 
-#: avrtsb/pytsb.py:141
+#: avrtsb/pytsb.py:260
 msgid "This will reset the content of the EEPROM to the value '0xff'"
 msgstr ""
 
-#: avrtsb/pytsb.py:145
+#: avrtsb/pytsb.py:264
 msgid "Read the specified file and write it to the EEPROM device memory"
 msgstr ""
 
-#: avrtsb/pytsb.py:149
+#: avrtsb/pytsb.py:269
+msgid ""
+"Format of the file to read from or write into the eeprom memory. Default "
+"value is auto. For list of available options use -ewf help"
+msgstr ""
+
+#: avrtsb/pytsb.py:275
 msgid ""
 "Read the specified file and compare it with EEPROM device memory. When is"
 " used with --eeprom-write option, the FILENAME can be omitted."
 msgstr ""
 
-#: avrtsb/pytsb.py:154
+#: avrtsb/pytsb.py:280
 msgid ""
 "Force to perform some danger operation: overwrite existing file or write "
 "write new bootloader to the device flash ROM."
 msgstr ""
 
-#: avrtsb/pytsb.py:160
+#: avrtsb/pytsb.py:286
 msgid ""
 "Type of ATtiny/ATmega device for which the firmware will be made. For the"
 " list of all supported devices use --device help"
 msgstr ""
 
-#: avrtsb/pytsb.py:165
+#: avrtsb/pytsb.py:291
 msgid ""
 "Port definition for serial communication. For example d0d1 means D0=RxD "
 "and D1=TxD."
 msgstr ""
 
-#: avrtsb/pytsb.py:168
+#: avrtsb/pytsb.py:294
 msgid ""
 "Name of output file with generated firmware. File will be Hex (.hex) or "
 "Binary (other extension)"
 msgstr ""
 
-#: avrtsb/pytsb.py:191
-#, python-format
-msgid "%(prog)s error: argument -b/--buadrate: invalid int value: '%s'"
+#: avrtsb/pytsb.py:299
+msgid "Output file format of the generated firmware. Default: auto"
 msgstr ""
 
-#: avrtsb/pytsb.py:199
+#: avrtsb/pytsb.py:302
+msgid "Overwrite existing file"
+msgstr ""
+
+#: avrtsb/pytsb.py:330
+#, python-format
+msgid "%s: error: argument -b/--buadrate: invalid int value: '%s'"
+msgstr ""
+
+#: avrtsb/pytsb.py:338
 #, python-format
 msgid "%s: error: argument -fv/--flash-verify: expected 1 argument(s)\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:200
+#: avrtsb/pytsb.py:339
 msgid "Argument can be omitted only when is used with option --flash-write\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:211
+#: avrtsb/pytsb.py:350
 #, python-format
 msgid "%s: error: argument -fv/--eeprom-verify: expected 1 argument(s)"
 msgstr ""
 
-#: avrtsb/pytsb.py:212
+#: avrtsb/pytsb.py:351
 msgid "Argument can be omitted only when is used with option --eeprom-write"
 msgstr ""
 
-#: avrtsb/pytsb.py:221
+#: avrtsb/pytsb.py:364
+msgid ""
+"{}: error: --change-timeout: time delay shall be in the range 100 .. "
+"10000 ms"
+msgstr ""
+
+#: avrtsb/pytsb.py:368
+msgid ""
+"{}: error: --change-timeout: MCU frequency must be value in range 1 .. 25"
+" MHz or 10000 .. 25000000 Hz"
+msgstr ""
+
+#: avrtsb/pytsb.py:371
 #, python-format
 msgid "%s: error: argument --change-timeout: expected 1 or 2 argument(s)"
 msgstr ""
 
-#: avrtsb/pytsb.py:271
+#: avrtsb/pytsb.py:421
 msgid "Cannot access firmware database.\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:281
+#: avrtsb/pytsb.py:435
 msgid ""
 "pytsb fw: error: argument -d/--device expected., Use --device help for "
 "list of all supported devices.\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:287
+#: avrtsb/pytsb.py:441
 msgid "pytsb fw: error: argument -p/--rxtx expected.\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:291
+#: avrtsb/pytsb.py:445
 msgid ""
 "pytsb fw: error: argument -p/--rxtx must be in the form d0d1, where D0 = "
 "RxD, and D1=TxD.\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:299
-#, python-format
-msgid "Output file '%s' already exist, do nothing.\n"
-msgstr ""
-
-#: avrtsb/pytsb.py:310
+#: avrtsb/pytsb.py:460
 msgid "Try to use standard baudrate from the following list:"
 msgstr ""
 
-#: avrtsb/pytsb.py:332
+#: avrtsb/pytsb.py:489
+msgid "Progress"
+msgstr ""
+
+#: avrtsb/pytsb.py:489
+msgid "Complete"
+msgstr ""
+
+#: avrtsb/pytsb.py:499
 msgid "List of available ports:"
 msgstr ""
 
-#: avrtsb/pytsb.py:334
+#: avrtsb/pytsb.py:501
 #, python-format
 msgid "  %-20s %s"
 msgstr ""
 
-#: avrtsb/pytsb.py:337
+#: avrtsb/pytsb.py:504
 msgid "List of standard baudrates, not all of them must be supported:"
 msgstr ""
 
-#: avrtsb/pytsb.py:355 avrtsb/pytsb.py:406
-#, python-format
-msgid ""
-"Error: output file \"%s\" already exist. Use --force option or delete the"
-" existing file."
+#: avrtsb/pytsb.py:510
+msgid "File format can be one of:"
 msgstr ""
 
-#: avrtsb/pytsb.py:382 avrtsb/pytsb.py:434
+#: avrtsb/pytsb.py:511
+msgid "  {:10s} auto detected, only for input files"
+msgstr ""
+
+#: avrtsb/pytsb.py:512
+msgid "  {:10s} Intel Hex"
+msgstr ""
+
+#: avrtsb/pytsb.py:513
+msgid "  {:10s} raw binary"
+msgstr ""
+
+#: avrtsb/pytsb.py:528
+msgid "Read flash program memory:"
+msgstr ""
+
+#: avrtsb/pytsb.py:533
+msgid "Flash read memory OK"
+msgstr ""
+
+#: avrtsb/pytsb.py:568 avrtsb/pytsb.py:649
 msgid "Data verification OK"
 msgstr ""
 
-#: avrtsb/pytsb.py:384
+#: avrtsb/pytsb.py:570
 msgid "Flash ROM device verification error\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:396
-msgid ""
-"Warning: firmware includes SPM instruction, which can be dangerous for "
-"bootloader.\n"
-"Use --force option if you really wish to write to device flash ROM."
+#: avrtsb/pytsb.py:575
+msgid "Erase flash program memory:"
 msgstr ""
 
-#: avrtsb/pytsb.py:399
+#: avrtsb/pytsb.py:580
+msgid "FLASH Erase OK"
+msgstr ""
+
+#: avrtsb/pytsb.py:593
+msgid ""
+"Warning: firmware includes SPM instruction, which can be dangerous for "
+"bootloader. Use --force option if you really wish to write into the "
+"device flash ROM."
+msgstr ""
+
+#: avrtsb/pytsb.py:598
 msgid ""
 "Firmware includes SPM instruction. Continue to write to the device flash "
 "ROM --force option is used."
 msgstr ""
 
-#: avrtsb/pytsb.py:436
+#: avrtsb/pytsb.py:603
+msgid "Write program Flash memory:"
+msgstr ""
+
+#: avrtsb/pytsb.py:608
+msgid "FLASH Write OK"
+msgstr ""
+
+#: avrtsb/pytsb.py:612
+msgid "Read EEPROM memory:"
+msgstr ""
+
+#: avrtsb/pytsb.py:618
+msgid "Read EEPROM OK"
+msgstr ""
+
+#: avrtsb/pytsb.py:651
 msgid "EEPROM verification error\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:442
+#: avrtsb/pytsb.py:657
+msgid "Erase EEPROM memory:"
+msgstr ""
+
+#: avrtsb/pytsb.py:662
 msgid "EEPROM Erase OK"
 msgstr ""
 
-#: avrtsb/pytsb.py:449
+#: avrtsb/pytsb.py:672
+msgid "Write EEPROM memory:"
+msgstr ""
+
+#: avrtsb/pytsb.py:677
 msgid "EEPROM Write OK"
 msgstr ""
 
-#: avrtsb/pytsb.py:456
-#, python-format
-msgid "Input file \"%s\" not found."
-msgstr ""
-
-#: avrtsb/pytsb.py:464
-msgid ""
-"Not supported file format. Only only Intel Hex (.HEX) or\n"
-"raw binary files (.BIN) are supported."
-msgstr ""
-
-#: avrtsb/pytsb.py:493
+#: avrtsb/pytsb.py:700
 msgid "Write user data OK"
 msgstr ""
 
-#: avrtsb/pytsb.py:494
+#: avrtsb/pytsb.py:701
 #, python-format
 msgid "Timeout factor %d"
 msgstr ""
 
-#: avrtsb/pytsb.py:495
+#: avrtsb/pytsb.py:702
 #, python-format
 msgid "Password: %s"
 msgstr ""
 
-#: avrtsb/pytsb.py:499
+#: avrtsb/pytsb.py:706
 msgid "Emergency erase is takes from 10s up to 1 minute"
 msgstr ""
 
-#: avrtsb/pytsb.py:500
+#: avrtsb/pytsb.py:707
 msgid "Please be patient"
 msgstr ""
 
-#: avrtsb/pytsb.py:506
+#: avrtsb/pytsb.py:713
 msgid "Ressetting MCU, I try to access TSB without password."
 msgstr ""
 
-#: avrtsb/pytsb.py:519
+#: avrtsb/pytsb.py:726
 msgid "List of all supported devices:"
 msgstr ""
 
-#: avrtsb/pytsb.py:527
+#: avrtsb/pytsb.py:734
 #, python-format
 msgid ""
 "Sorry firmware is not supported for '%s'\n"
 "."
 msgstr ""
 
-#: avrtsb/pytsb.py:535
+#: avrtsb/pytsb.py:742
 #, python-format
 msgid "Device '%s' doesn't support ports '%s'\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:536
+#: avrtsb/pytsb.py:743
 #, python-format
 msgid "Supported ports are: %s\n"
 msgstr ""
 
-#: avrtsb/pytsb.py:545
-#, python-format
-msgid "TSB firmware saved to file: '%s'"
+#: avrtsb/pytsb.py:755
+msgid "TSB firmware saved into the file: '{}'"
 msgstr ""
 
-#: avrtsb/tsbloader.py:57
+#: avrtsb/tsbloader.py:68
 msgid "Bad info data block received !"
 msgstr ""
 
-#: avrtsb/tsbloader.py:73
+#: avrtsb/tsbloader.py:84
 msgid "Pagesize not valid - abort."
 msgstr ""
 
-#: avrtsb/tsbloader.py:85
+#: avrtsb/tsbloader.py:96
 msgid "Error: Confirmation of header expected."
 msgstr ""
 
-#: avrtsb/tsbloader.py:114
+#: avrtsb/tsbloader.py:125
 msgid "Timeout factor must be in range 8..255"
-msgstr ""
-
-#: avrtsb/tsbloader.py:126
-#, python-format
-msgid "Maximum lenght of password is %d"
-msgstr ""
-
-#: avrtsb/tsbloader.py:135
-msgid "TINY SAFE BOOTLOADER"
-msgstr ""
-
-#: avrtsb/tsbloader.py:136
-#, python-format
-msgid "VERSION   : %d"
 msgstr ""
 
 #: avrtsb/tsbloader.py:137
 #, python-format
+msgid "Maximum lenght of password is %d"
+msgstr ""
+
+#: avrtsb/tsbloader.py:146
+msgid "TINY SAFE BOOTLOADER"
+msgstr ""
+
+#: avrtsb/tsbloader.py:147
+#, python-format
+msgid "VERSION   : %d"
+msgstr ""
+
+#: avrtsb/tsbloader.py:148
+#, python-format
 msgid "STATUS    : %X"
 msgstr ""
 
-#: avrtsb/tsbloader.py:138
+#: avrtsb/tsbloader.py:149
 #, python-format
 msgid "SIGNATURE : %.2X %.2X %.2X"
 msgstr ""
 
-#: avrtsb/tsbloader.py:139
+#: avrtsb/tsbloader.py:150
 #, python-format
 msgid "DEVICE    : %s"
 msgstr ""
 
-#: avrtsb/tsbloader.py:140
+#: avrtsb/tsbloader.py:151
 #, python-format
 msgid "FLASH     : %d"
 msgstr ""
 
-#: avrtsb/tsbloader.py:141
+#: avrtsb/tsbloader.py:152
 #, python-format
 msgid "APPFLASH  : %d"
 msgstr ""
 
-#: avrtsb/tsbloader.py:142
+#: avrtsb/tsbloader.py:153
 #, python-format
 msgid "PAGESIZE  : %d"
 msgstr ""
 
-#: avrtsb/tsbloader.py:143
+#: avrtsb/tsbloader.py:154
 #, python-format
 msgid "EEPROM    : %d"
 msgstr ""
 
-#: avrtsb/tsbloader.py:144
+#: avrtsb/tsbloader.py:155
 #, python-format
 msgid "APPJUMP   : %.4X"
 msgstr ""
 
-#: avrtsb/tsbloader.py:145
+#: avrtsb/tsbloader.py:156
 #, python-format
 msgid "TIMEOUT   : %d"
 msgstr ""
 
-#: avrtsb/tsbloader.py:186
+#: avrtsb/tsbloader.py:203
 msgid "reset_line attribute can have only TSBLoader.DTR, TSBLoader.RTS value."
 msgstr ""
 
-#: avrtsb/tsbloader.py:197
+#: avrtsb/tsbloader.py:214
 msgid "reset_active attribute can have only values only 0, 1"
 msgstr ""
 
-#: avrtsb/tsbloader.py:270
+#: avrtsb/tsbloader.py:298
 msgid "Timeout error - TSB does not respond"
 msgstr ""
 
-#: avrtsb/tsbloader.py:272
+#: avrtsb/tsbloader.py:300
 msgid "Comunication error: invalid answer from TSB"
 msgstr ""
 
-#: avrtsb/tsbloader.py:281
+#: avrtsb/tsbloader.py:309
 msgid "User data read error."
 msgstr ""
 
-#: avrtsb/tsbloader.py:297
+#: avrtsb/tsbloader.py:325
 msgid "User data write error."
 msgstr ""
 
-#: avrtsb/tsbloader.py:307 avrtsb/tsbloader.py:480
+#: avrtsb/tsbloader.py:339 avrtsb/tsbloader.py:531
 msgid "One-wire interface detected."
 msgstr ""
 
-#: avrtsb/tsbloader.py:314
+#: avrtsb/tsbloader.py:346
 msgid "Error: Device does not respond."
 msgstr ""
 
-#: avrtsb/tsbloader.py:316
+#: avrtsb/tsbloader.py:348
 msgid " Please check your password."
 msgstr ""
 
-#: avrtsb/tsbloader.py:318
+#: avrtsb/tsbloader.py:350
 msgid " Maybe password is required."
 msgstr ""
 
-#: avrtsb/tsbloader.py:348
+#: avrtsb/tsbloader.py:380
 msgid "Read flash memory page error."
 msgstr ""
 
-#: avrtsb/tsbloader.py:351
-#, python-format
-msgid "Flash read %.4X"
-msgstr ""
-
-#: avrtsb/tsbloader.py:355
+#: avrtsb/tsbloader.py:389
 msgid "Read Error: other memory page expected."
 msgstr ""
 
-#: avrtsb/tsbloader.py:372
+#: avrtsb/tsbloader.py:408
 msgid "Error: Not enough space."
 msgstr ""
 
-#: avrtsb/tsbloader.py:385
-#, python-format
-msgid "Flash write %.4X"
-msgstr ""
-
-#: avrtsb/tsbloader.py:394
+#: avrtsb/tsbloader.py:429
 msgid "Error: end of appflash reached or verifying error"
 msgstr ""
 
-#: avrtsb/tsbloader.py:396
+#: avrtsb/tsbloader.py:431
 msgid "FLASH Write: Undefined error."
 msgstr ""
 
-#: avrtsb/tsbloader.py:410
+#: avrtsb/tsbloader.py:454
 msgid "Error: EEPROM not enough space."
 msgstr ""
 
-#: avrtsb/tsbloader.py:422
-#, python-format
-msgid "EEPROM write %.4X"
-msgstr ""
-
-#: avrtsb/tsbloader.py:432
+#: avrtsb/tsbloader.py:475
 msgid "Error: end of eeprom reached or verifying error"
 msgstr ""
 
-#: avrtsb/tsbloader.py:434
+#: avrtsb/tsbloader.py:477
 msgid "EEPROM Write: Undefined error."
 msgstr ""
 
-#: avrtsb/tsbloader.py:454
+#: avrtsb/tsbloader.py:502
 msgid "Read EEPROM memory page error."
 msgstr ""
 
-#: avrtsb/tsbloader.py:457
-#, python-format
-msgid "EEPROM read %.4X"
-msgstr ""
-
-#: avrtsb/tsbloader.py:461
+#: avrtsb/tsbloader.py:510
 msgid "Read Error: other EEPROM page expected."
 msgstr ""
 
-#: avrtsb/tsbloader.py:483
+#: avrtsb/tsbloader.py:534
 msgid "TSB is accessible without password. "
 msgstr ""
 

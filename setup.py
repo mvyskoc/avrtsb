@@ -5,80 +5,48 @@ use_setuptools()
 
 import os
 from setuptools import setup
+from setuptools.command.install import _install
 from setuptools.command.build_py import build_py as _build_py
-from babel.messages import frontend as babel
 
-LOCALE_DOMAIN = 'pytsb'
-LOCALE_DIRECTORY = 'avrtsb/locale'
-LOCALE_TEMPLATE = os.path.join(LOCALE_DIRECTORY, LOCALE_DOMAIN + '.pot')
+babel_cmdclass = {}
+try:
+    from avrtsb import setup_locale
+    babel_cmdclass = {'compile_catalog'  : setup_locale.compile_catalog,
+                      'extract_messages' : setup_locale.extract_messages,
+                      'init_catalog'     : setup_locale.init_catalog,
+                      'update_catalog'   : setup_locale.update_catalog}
+except ImportError:
+    print("Warning: babel package is not installed. It is required for")
+    print("compilation a prepare new localisation.")
+    print()
+    print("Install it with the following command:")
+    prin( "  pip2 install babel")
 
 def read(fname):
     return open(os.path.join(os.path.dirname(__file__), fname)).read()
 
-class compile_catalog(babel.compile_catalog):
-    def initialize_options(self):
-        babel.compile_catalog.initialize_options(self)
-        self.domain = LOCALE_DOMAIN
-        self.directory = LOCALE_DIRECTORY
-        self.locale = None
-        self.use_fuzzy = True
-        self.statistics = True
+def compile_catalog(distribution):
+    from avrtsb import setup_locale
+    compiler = setup_locale.compile_catalog(distribution)
+    compiler.initialize_options()
+    compiler.run()
 
-class update_catalog(babel.update_catalog):
-    def initialize_options(self):
-        babel.update_catalog.initialize_options(self)
-        self.domain = LOCALE_DOMAIN
-        self.input_file = LOCALE_TEMPLATE
-        self.output_dir = LOCALE_DIRECTORY
-        self.no_wrap = False
-        self.ignore_obsolete = True
-        self.no_fuzzy_matching = False
-        self.previous = False
 
+class build_py(_build_py, object):
     def run(self):
-        self.run_command('extract_messages')
-        babel.update_catalog.run(self)
+        compile_catalog(self.distribution) 
+        super(build_py, self).run()
 
-class extract_messages(babel.extract_messages):
-    def initialize_options(self):
-        babel.extract_messages.initialize_options(self)
-        self.charset = 'utf-8'
-        self.no_default_keywords = False
-        self.keywords = '_ l'
-        self.mapping_file = None
-        self.no_location = False
-        self.omit_header = False
-        self.output_file = LOCALE_TEMPLATE
-        self.input_dirs = 'avrtsb'
-        self.width = None
-        self.no_wrap = False
-        self.sort_output = False
-        self.sort_by_file = True        
-        self.msgid_bugs_address = 'm.vyskoc@seznam.cz'
-        self.copyright_holder = None
-        self.add_comments = None
-        self.strip_comments = False
+setup_cmdclass = {
+    'build_py'   : build_py,
+}
+setup_cmdclass.update(babel_cmdclass)
 
-class init_catalog(babel.init_catalog):
-    def initialize_options(self):
-        babel.init_catalog.initialize_options(self)
-        self.output_dir = LOCALE_DIRECTORY
-        self.output_file = None
-        self.input_file = LOCALE_TEMPLATE
-        self.locale = None
-        self.domain = 'pytsb'
-        self.no_wrap = False
-        self.width = None
-        
 
-class build_py(_build_py):
-    def run(self):
-        self.run_command('compile_catalog')
-        _build_py.run(self)
 
 setup(
     name = "avrtsb",
-    version = "0.2.5a2",
+    version = "0.2.6",
     author = "Martin Vyskočil",
     author_email = "m.vyskoc@seznam.cz",
     description = ("Python version of TinySafeBoot"
@@ -86,7 +54,7 @@ setup(
     license = "GPLv3",
     keywords = "TinySafeBoot, AVR, bootloader",
     url = "http://github.com/mvyskoc/avrtsb",
-    download_url="https://github.com/mvyskoc/avrtsb/tarball/v0.2.5a2",
+    download_url="https://github.com/mvyskoc/avrtsb/tarball/v0.2.6",
     packages=['avrtsb'],
     package_data={'avrtsb': ['tsb_db.pklz', 'locale/*/LC_MESSAGES/*.mo']},
     long_description=read('README.md'),
@@ -101,25 +69,21 @@ setup(
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     ],
 
-    cmdclass = {'compile_catalog': compile_catalog,
-                'extract_messages': extract_messages,
-                'init_catalog': init_catalog,
-                'update_catalog': update_catalog,
-                'build_py': build_py},
-
+    cmdclass=setup_cmdclass,
     message_extractors = {
         'avrtsb': [
-            ('**.py',                'python', None)
+            ('**.py','python', None)
         ],
     },
 
     dependency_links=['https://launchpad.net/intelhex/+download'],
+    python_requires="~=2.5",
 
     install_requires=[
           'pyserial', 'intelhex', 'babel'
     ],
 
     entry_points = {
-        'console_scripts': ['pytsb=avrtsb.pytsb:main'],
+        'console_scripts': ['pytsb=avrtsb.pytsb:main']
     }
 )

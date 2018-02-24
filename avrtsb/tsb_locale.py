@@ -5,15 +5,18 @@ import locale
 import os
 import sys
 
+LOCALE_DOMAIN = 'pytsb'
+LOCALE_DIRECTORY = os.path.join( os.path.dirname(__file__), "locale" )
+LOCALE_TEMPLATE = os.path.join(LOCALE_DIRECTORY, LOCALE_DOMAIN + '.pot')
+
 STDOUT_ENCODING=sys.stdout.encoding
 
-locale_dir = os.path.join( os.path.dirname(__file__), "locale" )
 LANG_CODE, SYS_ENCODING = locale.getdefaultlocale()
 
 if LANG_CODE == None:
     LANG_CODE = "en_US"
  
-translation = gettext.translation('pytsb', locale_dir,
+translation = gettext.translation('pytsb', LOCALE_DIRECTORY,
                                   languages=[LANG_CODE],
                                   codeset=STDOUT_ENCODING,
                                   fallback=True)

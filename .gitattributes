@@ -2,3 +2,6 @@
 
 *.py text
 
+# Denote all files that are truly binary and should not be modified.
+avrtsb/tsb_db.pklz  binary
+

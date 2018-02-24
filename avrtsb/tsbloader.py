@@ -3,6 +3,8 @@
 import time
 import firmware
 import math
+import collections
+
 from tsb_locale import *
 
 from serial import Serial
@@ -13,9 +15,9 @@ from cStringIO import StringIO
 TSB_CONFIRM="!"
 TSB_REQUEST="?"
 TSB_INFO_HEADER_SIZE=15
-TSB_USER_HEADER_SIZE=3          #User header is followed with password up to end of pagesize
-FLASH_PAGEWRITE_TIMEOUT=200     #Maximum time for write one page to flash - usually about 74
-EMERGENCY_ERASE_TIMEOUT=60000   #Emergency erase takes a lot of time, all memories must be reprogrammed
+TSB_USER_HEADER_SIZE=3          # User header is followed with password up to end of pagesize
+FLASH_PAGEWRITE_TIMEOUT=200     # Maximum time for write one page to flash - usually about 74
+EMERGENCY_ERASE_TIMEOUT=60000   # Emergency erase takes a lot of time, all memories must be reprogrammed
 
 
 class TSBException(Exception):
@@ -24,7 +26,12 @@ class TSBException(Exception):
         # Call the base class constructor with the parameters it needs
         super(TSBException, self).__init__(message)
 
-     
+class ProgressInfo(object):
+    def __init__(self, total):
+        self.total = total
+        self.iteration = 0
+        self.result = None
+
 class DeviceInfo:
     def __init__(self):
         self.buildword = 0
@@ -52,8 +59,12 @@ class DeviceInfo:
         2 bytes EEPROM size
         1 byte ! CONFIRM
         """
-        if header[0:3].lower() <> "tsb":
-            print header
+
+        # For some higher baudrates can be problem with synchronisation
+        # alternative header is received
+        # if header[0:3] not in ("TSB", "\xd4\xd3\xc2"): - not safe
+        if header[0:3] not in ("TSB"):
+            print repr(header)
             raise TSBException( _("Bad info data block received !") )
         
         self.buildword = unpack("H", header[3:5])[0]
@@ -166,14 +177,20 @@ class TSBLoader:
         self.serial = serial
         self.reset_line = TSBLoader.DTR
         self.reset_active = 1
+        self.reset_cmd = "" # Use application command for start bootloader
 
         self.setPassword("")
         self.one_wire = False
         self.timeout_reset = 200 #ms
         self.device_info = DeviceInfo()
         
-        #Timeout for sendind 10 characters 
-        self.serial.timeout = 100.0 / serial.baudrate
+        # Timeout 50ms is big enought for transmitt 7 characters with speed
+        # 1200 B.
+        # Timout cannot be shorter, because there is necessary some minimum
+        # time for init TSB Bootloader protected with the password
+        # Concurrently the time cannot be too long, because of the autodetection
+        # if the password is necessarly
+        self.serial.timeout = 0.05
         self.state = TSBLoader.STATE_INIT
     
     @property
@@ -206,16 +223,27 @@ class TSBLoader:
         time.sleep(ms / 1000.0)
 
     def setPower(self):
-        """Turn on other line than reset line to log 0. The output
-        of the pin will be cca +12V which can be use for power RS232 convertor
+        """Switch on other line than line for reset to log 1. The output
+        of the pin will be cca +12V which can be use for power RS232 convertor.
+        If reset by application command is used, use both RTS, DTR lines for
+        power.
         """
-        if self.reset_line == TSBLoader.DTR:
-            self.serial.setRTS(0)
+        if self.reset_cmd:
+            self.serial.setRTS(1)
+            self.serial.setDTR(1)
         else:
-            self.serial.setDTR(0)
+            if self.reset_line == TSBLoader.DTR:
+                self.serial.setRTS(1)
+            else:
+                self.serial.setDTR(1)
+
         self.sleep(100)
 
     def resetMCU(self):
+        # Bootloader is started with application command
+        if self.reset_cmd:
+            return
+
         setReset = { TSBLoader.RTS : self.serial.setRTS, 
                      TSBLoader.DTR : self.serial.setDTR } [self.reset_line]
         
@@ -297,9 +325,13 @@ class TSBLoader:
            raise TSBException(_("User data write error."))
 
     def activateTSB(self):
-        self.resetMCU()
-        self.sendCommand("@@@")
+        if self.reset_cmd:
+            self.sendCommand(self.reset_cmd) 
+            self.read() # Read confirmation from application if exist
+        else:
+            self.resetMCU()
         
+        self.sendCommand("@@@")
         rx = self.read()
         if rx[:3] == "@@@":
             self.one_wire = True
@@ -309,7 +341,7 @@ class TSBLoader:
         if (rx == '') and (self.password):
             self.sendCommand(self.password)
             rx = self.read()
-            
+
         if rx == "":
             err_message = _("Error: Device does not respond.")
             if self.password:             
@@ -318,7 +350,6 @@ class TSBLoader:
                 err_message += _(" Maybe password is required.")
 
             raise TSBException(err_message)
-        
         self.device_info.parseInfoHeader(rx)
         self.device_info.parseUserData(self.readUserData())
         self.state = TSBLoader.STATE_ACTIVE
@@ -340,6 +371,7 @@ class TSBLoader:
 
         addr = 0
         rx = "init"
+        progress = ProgressInfo(self.device_info.appflash)
         while (rx <> '') and (addr < self.device_info.appflash):
             self.sendCommand(TSB_CONFIRM)
             rx = self.read(self.device_info.pagesize)
@@ -348,8 +380,10 @@ class TSBLoader:
                 raise TSBException(_("Read flash memory page error."))
     
             addr += len(rx)
-            self.log(_("Flash read %.4X") % addr)
+            progress.iteration += len(rx)
             flashdata.append(rx)
+            yield(progress)
+            
         
         if addr < self.device_info.appflash:
             raise TSBException(_("Read Error: other memory page expected."))
@@ -357,7 +391,9 @@ class TSBLoader:
         self.waitRespond( TSB_CONFIRM )        
         flashdata = ''.join(flashdata)
         flashdata = flashdata.rstrip("\xFF") #Remove empty data
-        return flashdata
+
+        progress.result = flashdata
+        yield(progress)
 
 
     def flashWrite(self, data):
@@ -376,13 +412,12 @@ class TSBLoader:
         pages_count = self.device_info.appflash / pagesize
         self.waitRespond( TSB_REQUEST, FLASH_PAGEWRITE_TIMEOUT*pages_count) 
 
-        pagenum = 0
-        # while (pagenum * pagesize) <= len(data):
+        progress = ProgressInfo(len(data))
         for pagenum in xrange(len(data) / pagesize):
             pagedata = data[pagenum*pagesize : (pagenum+1)*pagesize]
             self.sendCommand(TSB_CONFIRM)
             self.sendCommand(pagedata)
-            self.log(_("Flash write %.4X") % (pagenum*pagesize,))
+            # self.log(_("Flash write %.4X") % (pagenum*pagesize,))
             
             #From datasheet the maximum time for write one page is 4.5ms and
             #minimal time is 3.7 ms. 
@@ -395,16 +430,25 @@ class TSBLoader:
             elif rx <> TSB_REQUEST:
                 raise TSBException(_("FLASH Write: Undefined error."))
 
+            progress.iteration += pagesize
+            yield(progress)
+
+
+
         self.sendCommand(TSB_REQUEST)
         # For AVR Tiny must wait longer time
         self.waitRespond(TSB_CONFIRM, FLASH_PAGEWRITE_TIMEOUT)
 
     def flashErase(self):
-        self.flashWrite('')
+        data = self.device_info.flashsize * b'\xFF'
+        self.flashWrite(data)
 
     def eepromWrite(self, data):
         pagesize = self.device_info.pagesize
-        data = data.ljust(self.device_info.eepromsize, '\xFF')
+
+        #Pad data to all page
+        round_data = int(math.ceil(len(data) / float(pagesize)) * pagesize)
+        data = data.ljust(round_data, '\xFF')
         
         if len(data) > self.device_info.eepromsize:
             raise TSBException(_("Error: EEPROM not enough space."))
@@ -412,33 +456,36 @@ class TSBLoader:
         self.sendCommand("E")
         # We must wait than FLASH memory will be erased
         pages_count = self.device_info.eepromsize / pagesize
+
+        # TODO: Verify timeout for waitRespond
         self.waitRespond( TSB_REQUEST, FLASH_PAGEWRITE_TIMEOUT*pages_count) 
 
-        pagenum = 0
-        while (pagenum * pagesize) < len(data):
+        progress = ProgressInfo(len(data))
+        for pagenum in xrange(len(data) / pagesize):
             pagedata = data[pagenum*pagesize : (pagenum+1)*pagesize]
             self.sendCommand(TSB_CONFIRM)
             self.sendCommand(pagedata)
-            self.log(_("EEPROM write %.4X") % (pagenum*pagesize,))
             
-            #From datasheet the maximum time for write one page is 4.5ms and
-            #minimal time is 3.7 ms. 
-            #Function read has timeout only for receive cca 10 characters
-            #this is 100ms for 9600 bps
-            rx = self.read(1, FLASH_PAGEWRITE_TIMEOUT)   #Wait up to 5ms, read 1 byte
-            pagenum += 1
+            # From datasheet the maximum time for write one byte is 8.5 ms
+            # For sure the data are realy written 10 ms timout is used
+            timeout = pagesize * 10
+            rx = self.read(1, timeout)
             
             if rx == TSB_CONFIRM:
                 raise TSBException(_("Error: end of eeprom reached or verifying error"))
             elif rx <> TSB_REQUEST:
                 raise TSBException(_("EEPROM Write: Undefined error."))
 
+            progress.iteration += pagesize
+            yield(progress)
+
         self.sendCommand(TSB_REQUEST)
         self.waitRespond(TSB_CONFIRM) 
 
 
     def eepromErase(self):
-        self.eepromWrite('')
+        data = self.device_info.eepromsize * b'\xFF'
+        return self.eepromWrite(data)
         
     def eepromRead(self):
         eepromdata = []
@@ -446,6 +493,7 @@ class TSBLoader:
 
         addr = 0
         rx = "init"
+        progress = ProgressInfo(self.device_info.eepromsize)
         while (rx <> '') and (addr < self.device_info.eepromsize):
             self.sendCommand(TSB_CONFIRM)
             rx = self.read(self.device_info.pagesize)
@@ -454,8 +502,9 @@ class TSBLoader:
                 raise TSBException(_("Read EEPROM memory page error."))
     
             addr += len(rx)
-            self.log(_("EEPROM read %.4X") % addr)
+            progress.iteration += len(rx)
             eepromdata.append(rx)
+            yield(progress)
         
         if addr < self.device_info.eepromsize:
             raise TSBException(_("Read Error: other EEPROM page expected."))
@@ -464,7 +513,9 @@ class TSBLoader:
         self.waitRespond(TSB_CONFIRM)      
         eepromdata = ''.join(eepromdata)
         eepromdata = eepromdata.rstrip("\xFF") #Remove empty data
-        return eepromdata
+
+        progress.result = eepromdata
+        yield(progress)
         
     
     def emergencyErase(self):

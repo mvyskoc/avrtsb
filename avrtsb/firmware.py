@@ -104,7 +104,7 @@ class FirmwareInfo(object):
         state.append(self.signature)
         state.append(self.pin.data)
 
-        # Very probablz  is not necessary to save DDR, PORT registers
+        # Very probably  is not necessary to save DDR, PORT registers
         ddr = self.ddr.data
         if self.ddr.compare(self.pin, 1):
             ddr = None
@@ -332,10 +332,13 @@ class FirmwareDB(object):
                     
         
     def get_firmware(self, device_name):
+        device_name=device_name.lower()
         for fw_rec in self.tsbdb.values():
             for fw_info in fw_rec[1:]:
-                if device_name in fw_info.devices:
+                device_names = [d.lower() for d in fw_info.devices]
+                if device_name in device_names:
                     return Firmware(fw_rec[0], fw_info)
+
         raise KeyError(device_name)
             
 

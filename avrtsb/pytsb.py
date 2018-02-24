@@ -25,7 +25,107 @@ class AppException(Exception):
 
         # Call the base class constructor with the parameters it needs
         super(AppException, self).__init__(message)
+
+class DataFileContainer():
+    def __init__(self):
+        self.ihex_data = IntelHex()
+
+    def get_first_line(self, filename):
+        """Return first non empty line from the file
+        """
+        with open(filename, 'r') as file:
+            for line in file:
+                line = line.strip()
+                if line:
+                    return line
+
+    def is_intelhex(self, filename):
+        first_line = self.get_first_line(filename)
+        if first_line and re.match(":[0-9A-F]+", first_line):
+            return True
+
+        return False
+
+    def get_fileformat(self, filename):
+        basename, ext = os.path.splitext(filename)
+        if ext.upper() == '.HEX':
+            if self.is_intelhex(filename):
+                return 'ihex'
+            else:
+                raise AppException( _("Not supported HEX file format"))
+        else:
+            if self.is_intelhex(filename):
+                return 'ihex'
         
+        return 'raw'
+
+    def fromIntelHexObject(self, ihex):
+        self.ihex_data = IntelHex(ihex)
+
+    def fromIntelHex(self, filename):
+        self.ihex_data = IntelHex()
+        self.ihex_data.fromfile(filename, 'hex')
+
+    def fromBinary(self, filename):
+        self.ihex_data = IntelHex()
+        self.ihex_data.fromfile(filename, 'bin')
+
+    def fromFile(self, filename, format='auto'):
+        if not os.path.exists(filename):
+            raise AppException(_('Input file "{}" not found.').format(filename))
+       
+        if format == 'auto':
+            format = self.get_fileformat(filename)
+
+        if format == "ihex":
+            self.fromIntelHex(filename)
+        elif format == "raw":
+            self.fromBinary(filename)
+        else:
+            raise AppException(
+                _('"{}" Unsupported input file format').format(format))
+
+    def getIntelHex(self):
+        return self.ihex_data
+
+    def toIntelHex(self, filename):
+        self.ihex_data.tofile(filename, 'hex')
+
+    def toBinary(self, filename):
+        self.ihex_data.tofile(filename, 'bin')
+
+    def checkOutputFileExists(self, filename, overwrite):
+        if os.path.exists(filename) and (not overwrite):
+            raise AppException(
+                _('Error: output file "{}" already exist. '
+                  'Use --force option or delete the existing file.'
+                 ).format(filename))
+
+
+    def toFile(self, filename, format='auto', overwrite=False):
+        self.checkOutputFileExists(filename, overwrite)
+
+        if format == 'auto':
+            basename, ext = os.path.splitext(filename)
+            format = 'raw'
+            if ext.upper() == '.HEX':
+                format = 'ihex'
+
+        if format == 'ihex':
+            self.toIntelHex(filename)
+        elif format == 'raw':
+            self.toBinary(filename)
+        else:
+            raise AppException(
+                _('"{}" Unsupported output file format').format(format))
+    
+
+    def toBinStr(self, start=None, end=None):
+        return self.ihex_data.tobinstr(start, end)
+
+    def fromBinStr(self, data, addr = 0):
+        self.ihex_data.puts(addr, data)
+
 class ConsoleApp():
     def __init__(self):
         self.argParserInit()
@@ -77,18 +177,29 @@ class ConsoleApp():
             help=_("Password for accessing bootloader"))
 
         con_group.add_argument("-t", "--timeout", type=int, default=200,
-            help=_("Delay in ms after reset before TSB activation. Default value is 200 ms. " +
-                   "If you before set very low TIMOUT_FACTOR, you may need decrease this value. Very low value cause trouble" +
-                   "because of AVR startup time.")
+            help=_("After MCU reset wait specified time before the " 
+                   "TSB activation sequence is sent. "
+                   "Suitable value with the respect to TIMEOUT_FACTOR "
+                   "must be chosen. Default value is 200 ms")
         )
         
-        con_group.add_argument("--reset-dtr", choices=['0','1'],
+        reset_group = con_group.add_mutually_exclusive_group()
+        
+        reset_group.add_argument("--reset-dtr", choices=['0','1'],
             metavar='LEVEL = {0,1}', default="1",
             help=_("Reset MCU with DTR line active in LEVEL. Default: --reset-dtr 1") )
 
-        con_group.add_argument("--reset-rts",  choices=['0','1'],
+        reset_group.add_argument("--reset-rts",  choices=['0','1'],
             metavar='LEVEL = {0,1}',
             help=_('Reset MCU with RTS line active in LEVEL')) 
+
+        reset_group.add_argument(
+            "--reset-cmd", default="", type=str, nargs="?", const="TSB", 
+            help=_("Send given command for reset MCU, it must be supported by "
+                   "the application. The option cannot be used together with "
+                   "the RTS/DTR reset."
+                  )
+        )
 
         parser.add_argument("-i", "--info", action="store_true",
             help=_("Show bootloader and device info"))
@@ -100,11 +211,12 @@ class ConsoleApp():
             help=_("Change password for activating TinySafeBoot loader."))
         
         tsb_group.add_argument("--change-timeout", nargs="+", type=int,
-            metavar="[TIMEOUT_FACTOR] | [TIMEOUT_MS F_CPU]",
+            metavar=("TIMEOUT_FACTOR", "TIMEOUT_MS F_CPU"),
              help=_("Change the time how long time the bootloader will wait for activation before the " +
                     "downloaded firmware is started. The waiting time is given by number " +
                     "in range 8..255 (approx 0.1 up to many seconds). The TIMEOUT_FACTOR can be computed " +
-                    "from give time in milliseconds and MCU frequency in MHz or Hz.")
+                    "from given time in milliseconds and MCU frequency in MHz or Hz. " +
+                    "The delay shall not be shorter than 100ms.")
         )
 
         tsb_group.add_argument("--emergency-erase", action='store_true', 
@@ -125,6 +237,13 @@ class ConsoleApp():
         group.add_argument("-fw", "--flash-write", nargs=1, 
             metavar="FILENAME",
             help=_("Read the specified file and write it to the flash ROM device memory"))
+
+        group.add_argument(
+            "-fff", "--flash-file-format", default="auto", type=str,
+            metavar="FORMAT",
+            help=_("Format of the file to read from or write into the flash. "
+                   "Default value is auto. For list of available options "
+                   "use -fwf help"))
         
         group.add_argument("-fv", "--flash-verify", nargs="?", default=False,  
             metavar="FILENAME",
@@ -143,6 +262,13 @@ class ConsoleApp():
         ee_group.add_argument("-ew", "--eeprom-write", nargs=1, 
             metavar="FILENAME",
             help=_("Read the specified file and write it to the EEPROM device memory"))
+
+        group.add_argument(
+            "-eff", "--eeprom-file-format", default="auto", type=str,
+            metavar="FORMAT",
+            help=_("Format of the file to read from or write into the eeprom "
+                   "memory. Default value is auto. For list of available "
+                   "options use -ewf help"))
 
         ee_group.add_argument("-ev", "--eeprom-verify", nargs="?", default=False,  
             metavar="FILENAME",
@@ -167,6 +293,14 @@ class ConsoleApp():
         parser.add_argument("-o", "--output", metavar="FILENAME",
             help=_("Name of output file with generated firmware. File will be Hex (.hex) or Binary (other extension)"))
 
+        parser.add_argument(
+            "-fff", "--flash-file-format", default="auto", type=str,
+            metavar="FORMAT",
+            help=_("Output file format of the generated firmware. Default: auto"))
+
+        parser.add_argument("-f", "--force", action="store_true",
+            help=_("Overwrite existing file"))
+
     def run(self):
         args = self.parser.parse_args()
         self.args = args
@@ -187,8 +321,13 @@ class ConsoleApp():
             self.showBaudrates()
             return
         
+        if (args.flash_file_format == 'help') or (args.eeprom_file_format == 'help'):
+            self.showFileFormats()
+            return
+
+            
         if not args.baudrate.isdigit():
-            stderr.write(_("%(prog)s error: argument -b/--buadrate: invalid int value: '%s'") % (args.baudrate,))
+            stderr.write(_("%s: error: argument -b/--buadrate: invalid int value: '%s'") % (sys.argv[0], args.baudrate,))
             return
         
         args.baudrate = int(args.baudrate)
@@ -217,9 +356,20 @@ class ConsoleApp():
             #argparser returns object list for nargs=1 and simple value for nargs=?
             args.eeprom_verify = args.eeprom_write[0]
         
-        if args.change_timeout and len(args.change_timeout) > 2:
-            stderr.write(_("%s: error: argument --change-timeout: expected 1 or 2 argument(s)") % (sys.argv[0],))
-            return
+        if args.change_timeout:
+            if len(args.change_timeout) == 2:
+                time_ms, f_cpu = args.change_timeout
+                if (time_ms < 100) or (time_ms > 10000):
+                    stderr.write( _("{}: error: --change-timeout: time delay shall be in the range 100 .. 10000 ms".
+                                   format(sys.argv[0]) ))
+                    return
+                if (f_cpu < 1) or ( (f_cpu > 25) and (f_cpu < 10000) ) or (f_cpu > 25e6):
+                    stderr.write(_("{}: error: --change-timeout: MCU frequency must be value in range 1 .. 25 MHz or "
+                                   "10000 .. 25000000 Hz".format(sys.argv[0])))
+                    return
+            elif len(args.change_timeout) > 2:
+                stderr.write(_("%s: error: argument --change-timeout: expected 1 or 2 argument(s)") % (sys.argv[0],))
+                return
         
         #print args
         if not args:
@@ -227,7 +377,7 @@ class ConsoleApp():
         
         if args.emergency_erase:
             self.emergencyErase()
-            
+        
         self.activateTSB()
         if args.info:
             self.showDeviceInfo()
@@ -269,11 +419,15 @@ class ConsoleApp():
             self.fw_db = firmware.FirmwareDB()
         except Exception as e:
             stderr.write( _("Cannot access firmware database.\n"))
-            print e.message
+            print(e.message)
             return
     
         if args.device == 'help':
             self.showFWDeviceList()
+            return
+
+        if args.flash_file_format == 'help':
+            self.showFileFormats()
             return
 
         if not args.device:
@@ -295,10 +449,6 @@ class ConsoleApp():
         if not args.output:
             args.output = "tsb" + "_" + args.device + "_" + args.rxtx + ".hex"
 
-        if os.path.isfile(args.output):
-            stderr.write(_("Output file '%s' already exist, do nothing.\n") % (args.output,))
-            return
-            
         self.makeFirmware()
 
 
@@ -307,16 +457,16 @@ class ConsoleApp():
             serial_port = Serial(self.args.devicename, self.args.baudrate)
         except Exception as e:        
             if self.args.baudrate not in serial.Serial.BAUDRATES:
-                print _("Try to use standard baudrate from the following list:")
+                print(_("Try to use standard baudrate from the following list:"))
                 self.showBaudrates()
-                
-            raise AppException(e.message)
+            raise AppException(e.strerror)
             
             
             
         self.tsb = TSBLoader( serial_port )
         self.tsb.timeout_reset = self.args.timeout
         self.tsb.password = self.args.password
+        self.tsb.reset_cmd = self.args.reset_cmd
         
         if self.args.reset_rts <> None:
             self.tsb.reset_line = TSBLoader.RTS
@@ -325,103 +475,168 @@ class ConsoleApp():
         if self.args.reset_dtr <> None:
             self.tsb.reset_line = TSBLoader.DTR
             self.tsb.reset_active = int(self.args.reset_dtr)
+        
+    def printProgressBar(self, progress):
+        if progress.result != None:
+            return
 
+        length = 50
+        percent = 100 * (progress.iteration / float(progress.total))
+        filledLength = int(length * progress.iteration // progress.total)
+        bar = '#' * filledLength + '-' * (length - filledLength)
+        sys.stdout.write(
+            '\r{} |{}| {:.1f}% {}\r'.
+            format(_("Progress"), bar, percent, _("Complete")))
+
+        sys.stdout.flush()
+
+        # Print New Line on Complete
+        if progress.iteration == progress.total: 
+            print('')
 
     def showPortList(self):
         if comports:
-            print _('List of available ports:')
+            print(_('List of available ports:'))
             for port, desc, hwid in sorted(comports()):
-                print _('  %-20s %s') % (port, desc.decode(SYS_ENCODING))
+                print(_('  %-20s %s') % (port, desc.decode(SYS_ENCODING)))
 
     def showBaudrates(self):
-        print _('List of standard baudrates, not all of them must be supported:')
+        print(_('List of standard baudrates, not all of them must be supported:'))
         baudrates = [str(bps) for bps in serial.Serial.BAUDRATES]
         for line in textwrap.wrap(", ".join(baudrates)):
-            print line
-    
+            print(line)
+   
+    def showFileFormats(self):
+        print(_("File format can be one of:"))
+        print(_("  {:10s} auto detected, only for input files").format("auto"))
+        print(_("  {:10s} Intel Hex").format("ihex"))
+        print(_("  {:10s} raw binary").format("raw"))
+
     def activateTSB(self):
         self.initTSB()
-        self.tsb.setPower()     #Has sence only for self powered convertors
+        self.tsb.setPower()     # Has sence only for self powered convertors
         self.tsb.activateTSB()
     
     def showDeviceInfo(self):
-        print
-        print self.tsb.device_info.tostr()
-        print
+        print('')
+        print(self.tsb.device_info.tostr())
+        print('')
         
+
+    def flashReadData(self):
+        print('')
+        print(_("Read flash program memory:"))
+        for progress in self.tsb.flashRead():
+            self.printProgressBar(progress)
+            last_progress = progress
+        print('')
+        print(_("Flash read memory OK"))
+
+        return last_progress.result
+
     def flashRead(self):
-        out_filename = self.args.flash_read[0]
-        if os.path.exists(out_filename) and (not self.args.force):
-            raise AppException(_('Error: output file "%s" already exist. Use --force option or delete the existing file.') % (out_filename,))
+        filename = self.args.flash_read[0]
+        overwrite = self.args.force
 
-        data = self.tsb.flashRead()
-        ihex = IntelHex()
-        ihex.puts(0, data)
-                
-        filename, ext = os.path.splitext(out_filename)
-        out_format = "bin"
-        if ext.upper() == '.HEX':
-            out_format = "hex"
+        file_container = DataFileContainer()
+        file_container.checkOutputFileExists(filename, overwrite)
 
-        ihex.tofile(out_filename, format=out_format)
-    
+        file_container.fromBinStr( self.flashReadData() )
+        file_container.toFile(
+            filename, self.args.flash_file_format, self.args.force)
+
+
     def flashVerify(self):
         cmp_filename = self.args.flash_verify
-        ihex_cmp = self.readDataFromFile(cmp_filename)
+        file_container = DataFileContainer()
+        file_container.fromFile(cmp_filename, 
+                                self.args.flash_file_format)
+        ihex_cmp = file_container.getIntelHex()
         
-        flash_data = self.tsb.flashRead()
+        flash_data = self.flashReadData()
         ihex_flash = IntelHex()
         ihex_flash.puts(0, flash_data)
         
         sio = StringIO()
-        diff_dumps(ihex_flash, ihex_cmp, tofile=sio, name1=_l("Flash ROM device memory"), name2=cmp_filename)
+        diff_dumps(ihex_flash, ihex_cmp, tofile=sio, 
+                   name1=_l("Flash ROM device memory"), 
+                   name2=cmp_filename)
         diff_report = sio.getvalue(False)
         sio.close()
         
         if diff_report.strip() == "":
-            print _("Data verification OK")
+            print(_("Data verification OK"))
         else:
             stderr.write(_("Flash ROM device verification error\n"))
-            print diff_report
+            print(diff_report)
         
     def flashErase(self):
-        self.tsb.flashErase()
+        print('')
+        print(_("Erase flash program memory:"))
+        for progress in self.tsb.flashErase():
+            self.printProgressBar(progress)
+
+        print('')
+        print(_("FLASH Erase OK"))
 
     def flashWrite(self):
-        ihex = self.readDataFromFile(self.args.flash_write[0])
-        data = ihex.tobinstr(0)
+        file_container = DataFileContainer()
+        file_container.fromFile(self.args.flash_write[0],
+                                self.args.flash_file_format)
+        
+        data = file_container.toBinStr()
+        if (self.tsb.device_info.tinymega==0) and \
+                (self.tsb.check4SPM(data)):
 
-        if (self.tsb.device_info.tinymega==0) and self.tsb.check4SPM(data):
             if (not self.args.force):
-                raise AppException(_("Warning: firmware includes SPM instruction, which can be dangerous for bootloader.\n"+
-                                     "Use --force option if you really wish to write to device flash ROM.")
-                      )
-            print _("Firmware includes SPM instruction. Continue to write to the device flash ROM --force option is used.")
+                raise AppException(
+                    _("Warning: firmware includes SPM instruction, "
+                      "which can be dangerous for bootloader. "
+                      "Use --force option if you really wish to write "
+                      "into the device flash ROM."))
 
-        self.tsb.flashWrite(data)
+            print(_("Firmware includes SPM instruction. "
+                    "Continue to write to the device flash ROM "
+                    "--force option is used."))
+
+        print('')
+        print(_("Write program Flash memory:"))
+        for progress in self.tsb.flashWrite(data):
+            self.printProgressBar(progress)
+        
+        print('')
+        print(_("FLASH Write OK"))
+
+    def eepromReadData(self):
+        print('')
+        print(_("Read EEPROM memory:"))
+        for progress in self.tsb.eepromRead():
+            self.printProgressBar(progress)
+            last_progress = progress
+
+        print('')
+        print(_("Read EEPROM OK"))
+
+        return last_progress.result
 
     def eepromRead(self):
         filename = self.args.eeprom_read[0]
-        if os.path.exists(filename) and (not self.args.force):
-            raise AppException(_('Error: output file "%s" already exist. Use --force option or delete the existing file.') % (out_filename,))
+        overwrite = self.args.force
 
-        data = self.tsb.eepromRead()
-        ihex = IntelHex()
-        ihex.puts(0, data)
-                
-        basename, ext = os.path.splitext(filename)
-        out_format = "bin"
-        if ext.upper() == '.HEX':
-            out_format = "hex"
+        file_container = DataFileContainer()
+        file_container.checkOutputFileExists(filename, overwrite)
+        file_container.fromBinStr( self.eepromReadData() )
+        file_container.toFile(
+            filename, self.args.eeprom_file_format, self.args.force)
 
-        ihex.tofile(filename, format=out_format)
-
-            
     def eepromVerify(self):
         cmp_filename = self.args.eeprom_verify
-        ihex_cmp = self.readDataFromFile(cmp_filename)
+        file_container = DataFileContainer()
+        file_container.fromFile(cmp_filename, 
+                                self.args.eeprom_file_format)
+        ihex_cmp = file_container.getIntelHex()
 
-        eeprom_data = self.tsb.eepromRead()
+        eeprom_data = self.eepromReadData()
         ihex_eeprom = IntelHex()
         ihex_eeprom.puts(0, eeprom_data)        
         
@@ -431,46 +646,37 @@ class ConsoleApp():
         sio.close()
         
         if diff_report.strip() == "":
-            print _("Data verification OK")
+            print(_("Data verification OK"))
         else:
             stderr.write(_("EEPROM verification error\n"))
-            print diff_report
+            print(diff_report)
 
             
     def eepromErase(self):        
-        self.tsb.eepromErase()
-        print _("EEPROM Erase OK")
+        print('')
+        print(_("Erase EEPROM memory:"))
+        for progress in self.tsb.eepromErase():
+            self.printProgressBar(progress)
+        print('')
+
+        print(_("EEPROM Erase OK"))
         
 
     def eepromWrite(self):
-        ihex = self.readDataFromFile(self.args.eeprom_write[0])
-        data = ihex.tobinstr(0)
-        self.tsb.eepromWrite(data)
+        file_container = DataFileContainer()
+        file_container.fromFile(self.args.eeprom_write[0],
+                                self.args.eeprom_file_format)
+
+        data = file_container.toBinStr()
+        print('')
+        print(_("Write EEPROM memory:"))
+        for progress in self.tsb.eepromWrite(data):
+            self.printProgressBar(progress)
+        
+        print('')
         print _("EEPROM Write OK")
         
         
-    def readDataFromFile(self, filename):
-        """Open file filename (.hex, .bin) and returns IntelHex object
-        """
-        if not os.path.exists(filename):
-            raise AppException(_('Input file "%s" not found.') % (filename,))
-        
-        basename, ext = os.path.splitext(filename)
-        if ext.upper() == '.HEX':
-            format = 'hex'
-        elif ext.upper() == '.BIN':
-            format = 'bin'
-        else:
-            raise AppException(_("Not supported file format. Only only Intel Hex (.HEX) or\n" +
-                                 "raw binary files (.BIN) are supported.")
-                  )
-        
-        
-        ih = IntelHex()
-        ih.fromfile(filename, format)
-        return ih
-    
-
     def changeUserData(self):
         if self.args.new_password:
             self.tsb.device_info.password=self.args.new_password[0]
@@ -486,6 +692,7 @@ class ConsoleApp():
                     f_cpu *= 1e6
                 
                 timeout_factor = int((f_cpu * timeout_ms/1000) / 196600)
+                timeout_factor = max(1, timeout_factor)
 
             self.tsb.device_info.timeout = timeout_factor
         
@@ -516,9 +723,9 @@ class ConsoleApp():
             names.extend(aliases)
         names.sort()
 
-        print _("List of all supported devices:")
+        print(_("List of all supported devices:"))
         for line in textwrap.wrap(", ".join(names)):
-            print "  ",line
+            print("  ", line)
     
     def makeFirmware(self):
         try:
@@ -536,13 +743,16 @@ class ConsoleApp():
             stderr.write(_("Supported ports are: %s\n") % (supported_ports,))
             return
         
-        filename, ext = os.path.splitext(self.args.output)
-        out_format = "bin"
-        if ext.upper() == '.HEX':
-            out_format = "hex"
-            
-        firmware.tofile(self.args.output, out_format)
-        print _("TSB firmware saved to file: '%s'") % (self.args.output,)
+        filename = self.args.output
+        overwrite = self.args.force
+        file_container = DataFileContainer()
+        file_container.checkOutputFileExists(filename, overwrite)
+        file_container.fromIntelHexObject(firmware.getihex())
+        file_container.toFile(filename, 
+                              self.args.flash_file_format,
+                              self.args.force)
+        
+        print(_("TSB firmware saved into the file: '{}'").format(filename))
 
 
     def close(self):
@@ -552,7 +762,7 @@ class ConsoleApp():
 
 def main():
     app = ConsoleApp()
-    #app.run() 
+    # app.run() 
     try:
         pass
         app.run()

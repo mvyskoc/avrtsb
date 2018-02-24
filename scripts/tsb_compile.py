@@ -95,9 +95,11 @@ def compile_asm(asm_filename, out_hex, inc_listdir, mcu_def):
             'mcu_def'      : mcu_def
         }
     
-    cmd = "avrasm2 -fI -i %(mcu_def)s -I %(include_dirs)s -o %(out_hex)s %(asm_filename)s" % cmd_param
+    # cmd = "avrasm2 -fI -i %(mcu_def)s -I %(include_dirs)s -o %(out_hex)s %(asm_filename)s" % cmd_param
+    cmd = "wine avrasm2 -fI -i %(mcu_def)s -I %(include_dirs)s -o %(out_hex)s %(asm_filename)s" % cmd_param
     print cmd
-    return os.system(cmd)
+    cmd_errcode=os.system(cmd)
+    return cmd_errcode
 
     
 def add_firmware(name, hex_filename, mcu_info):
@@ -145,7 +147,7 @@ def compile_all(mcudef_dir, out_dir):
         mcudef_base, mcudef_ext = os.path.splitext(mcudef_file)
 
         fw_name = mcudef_base.rsplit('def', 1)[0]
-        out_hex = os.path.abspath(os.path.join(out_dir, fw_name + '.hex'))
+        out_hex = os.path.relpath(os.path.join(out_dir, fw_name + '.hex'))
 
         errcode = compile_asm(tsb_asm, out_hex, inc_listdir, mcudef)
         if errcode == 0:
